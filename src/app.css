@@ -24,27 +24,10 @@
 	--font-label: "Space Grotesk", sans-serif;
 }
 
-:root {
-	--bg-main: #0a0a0a;
-	--bg-card: #1c1c1e;
-	--bg-inner: #121212;
-	--border-card: #2e2e32;
-	--text-primary: #ffffff;
-	--text-secondary: #a1a1aa;
-}
-
-html:not(.dark) {
-	--bg-main: #f8f9fa;
-	--bg-card: #ffffff;
-	--bg-inner: #f1f3f5;
-	--border-card: #e5e7eb;
-	--text-primary: #111827;
-	--text-secondary: #4b5563;
-}
-
 body {
 	font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	overscroll-behavior: none;
+	transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .material-symbols-outlined {
@@ -71,4 +54,104 @@ body {
 * {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
+}
+
+/* ========================================================================= */
+/* Google Stitch Light Edition Overrides (Active when html does not have .dark) */
+/* ========================================================================= */
+
+html:not(.dark) {
+	color-scheme: light;
+}
+
+html:not(.dark) body,
+html:not(.dark) main,
+html:not(.dark) .bg-\[\#0a0a0a\] {
+	background-color: #f7f8fa !important;
+	color: #111827 !important;
+}
+
+html:not(.dark) header,
+html:not(.dark) nav {
+	background-color: rgba(255, 255, 255, 0.94) !important;
+	border-color: #e5e7eb !important;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) .bg-\[\#1c1c1e\],
+html:not(.dark) .bg-\[\#18181c\],
+html:not(.dark) .bg-\[\#18181e\],
+html:not(.dark) .bg-\[\#16161a\],
+html:not(.dark) .bg-\[\#121215\] {
+	background-color: #ffffff !important;
+	border-color: #e5e7eb !important;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) .bg-\[\#121212\],
+html:not(.dark) .bg-\[\#222228\],
+html:not(.dark) .bg-\[\#242426\] {
+	background-color: #f1f3f5 !important;
+	border-color: #e2e4e8 !important;
+}
+
+html:not(.dark) .border-\[\#2e2e32\],
+html:not(.dark) .border-white\/10,
+html:not(.dark) .border-white\/15,
+html:not(.dark) .border-white\/20 {
+	border-color: #e5e7eb !important;
+}
+
+html:not(.dark) .text-white {
+	color: #111827 !important;
+}
+
+html:not(.dark) .text-\[\#a1a1aa\] {
+	color: #4b5563 !important;
+}
+
+html:not(.dark) .text-\[\#71717a\] {
+	color: #6b7280 !important;
+}
+
+html:not(.dark) .bg-red-950\/40,
+html:not(.dark) .bg-red-950\/50,
+html:not(.dark) .bg-red-950\/60,
+html:not(.dark) .bg-red-950\/70,
+html:not(.dark) .bg-red-950\/80 {
+	background-color: #fee2e2 !important;
+	border-color: #fca5a5 !important;
+	color: #dc2626 !important;
+}
+
+html:not(.dark) .bg-blue-950\/50,
+html:not(.dark) .bg-blue-950\/60 {
+	background-color: #dbeafe !important;
+	border-color: #93c5fd !important;
+	color: #2563eb !important;
+}
+
+html:not(.dark) .bg-black\/70,
+html:not(.dark) .bg-black\/75,
+html:not(.dark) .bg-black\/80 {
+	background-color: rgba(255, 255, 255, 0.92) !important;
+	border-color: #e5e7eb !important;
+	color: #111827 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) select {
+	background-color: #ffffff !important;
+	border-color: #d1d5db !important;
+	color: #111827 !important;
+}
+
+/* Ensure vibrant red buttons and white text retain pure white text */
+html:not(.dark) .bg-\[\#ff0101\],
+html:not(.dark) .bg-\[\#ff0101\] *,
+html:not(.dark) button.bg-\[\#ff0101\],
+html:not(.dark) a.bg-\[\#ff0101\],
+html:not(.dark) .bg-gradient-to-r.from-red-600.to-\[\#ff0101\],
+html:not(.dark) .bg-gradient-to-r.from-red-600.to-\[\#ff0101\] * {
+	color: #ffffff !important;
 }

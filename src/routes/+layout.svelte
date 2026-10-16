@@ -9,14 +9,7 @@
 	let showNotifications = $state(false);
 
 	onMount(() => {
-		const savedTheme = localStorage.getItem('fitdee_theme');
-		if (savedTheme === 'light') {
-			isDark = false;
-			document.documentElement.classList.remove('dark');
-		} else {
-			isDark = true;
-			document.documentElement.classList.add('dark');
-		}
+		isDark = document.documentElement.classList.contains('dark');
 	});
 
 	function toggleTheme() {
