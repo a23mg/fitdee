@@ -10,6 +10,7 @@ export const user = pgTable('user', {
 	email: text('email').notNull().unique(),
 	emailVerified: boolean('email_verified').default(false).notNull(),
 	image: text('image'),
+	role: text('role').default('user').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -178,6 +179,16 @@ export const trainerBookings = pgTable('trainer_bookings', {
 	timeSlot: text('time_slot').notNull(), // e.g. "09:00 AM - 10:00 AM"
 	status: text('status').default('confirmed').notNull(),
 	notes: text('notes'),
+	createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
+export const notifications = pgTable('notifications', {
+	id: text('id').primaryKey(),
+	userId: text('user_id').notNull(),
+	title: text('title').notNull(),
+	message: text('message').notNull(),
+	type: text('type').default('info').notNull(),
+	isRead: boolean('is_read').default(false).notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull()
 });
 

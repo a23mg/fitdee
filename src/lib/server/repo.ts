@@ -22,16 +22,32 @@ async function checkPostgres() {
 	return isPostgresAvailable;
 }
 
-// In-memory data store seeded from Stitch design prototypes
-const fallbackStore = {
-	user: {
+// Multi-user & Multi-session in-memory data store with PG fallback
+const initialUsers = [
+	{
 		id: 'user_alex_mercer',
 		name: 'Alex Mercer',
 		email: 'alex@fitdee.app',
+		password: 'password123',
+		role: 'user',
 		image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-		emailVerified: true
+		emailVerified: true,
+		createdAt: new Date('2026-01-01T00:00:00Z')
 	},
-	profile: {
+	{
+		id: 'user_admin_ops',
+		name: 'Fitdee Ops Admin',
+		email: 'admin@fitdee.app',
+		password: 'adminpassword123',
+		role: 'admin',
+		image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+		emailVerified: true,
+		createdAt: new Date('2026-01-01T00:00:00Z')
+	}
+];
+
+const initialProfiles: Record<string, any> = {
+	user_alex_mercer: {
 		id: 'profile_user_alex_mercer',
 		userId: 'user_alex_mercer',
 		heightCm: 182,
@@ -43,6 +59,91 @@ const fallbackStore = {
 		dailyWaterTargetMl: 3000,
 		fitnessLevel: 'Hypertrophy Focus',
 		activeTier: '1-Year Protocol'
+	},
+	user_admin_ops: {
+		id: 'profile_user_admin_ops',
+		userId: 'user_admin_ops',
+		heightCm: 180,
+		currentWeightKg: 80.0,
+		targetWeightKg: 78.0,
+		bodyFatPercent: 12.5,
+		muscleMassKg: 42.0,
+		dailyCalorieTarget: 2800,
+		dailyWaterTargetMl: 3500,
+		fitnessLevel: 'Ops Diagnostic Mode',
+		activeTier: 'Master Admin Protocol'
+	}
+};
+
+const initialChallenges: Record<string, any> = {
+	user_alex_mercer: {
+		id: 'wake_alex',
+		userId: 'user_alex_mercer',
+		targetTime: '06:30 AM',
+		shakeTarget: 30,
+		currentShakes: 18,
+		isCompleted: false,
+		date: new Date().toISOString().split('T')[0]
+	},
+	user_admin_ops: {
+		id: 'wake_admin',
+		userId: 'user_admin_ops',
+		targetTime: '06:00 AM',
+		shakeTarget: 50,
+		currentShakes: 50,
+		isCompleted: true,
+		date: new Date().toISOString().split('T')[0]
+	}
+};
+
+const fallbackStore = {
+	users: [...initialUsers],
+	profiles: { ...initialProfiles },
+	challenges: { ...initialChallenges },
+	sessions: [
+		{
+			id: 'sess_alex_default',
+			token: 'fitdee_token_alex_mercer',
+			userId: 'user_alex_mercer',
+			createdAt: new Date(),
+			expiresAt: new Date(Date.now() + 30 * 86400000)
+		},
+		{
+			id: 'sess_admin_default',
+			token: 'fitdee_token_admin_ops',
+			userId: 'user_admin_ops',
+			createdAt: new Date(),
+			expiresAt: new Date(Date.now() + 30 * 86400000)
+		}
+	],
+	notifications: [
+		{
+			id: 'notif_1',
+			userId: 'user_alex_mercer',
+			title: 'Biomechanical Depth Target',
+			message: 'Your squat depth reached optimal 88° on set 3.',
+			type: 'info',
+			isRead: false,
+			createdAt: new Date(Date.now() - 1000 * 60 * 15)
+		},
+		{
+			id: 'notif_2',
+			userId: 'all',
+			title: 'Hydration Target',
+			message: '1,250 ml remaining for 3L target. Stay hydrated!',
+			type: 'info',
+			isRead: false,
+			createdAt: new Date(Date.now() - 1000 * 60 * 45)
+		}
+	],
+	get user() {
+		return this.users[0];
+	},
+	get profile() {
+		return this.profiles['user_alex_mercer'];
+	},
+	get wakeUpChallenge() {
+		return this.challenges['user_alex_mercer'];
 	},
 	weightLogs: [
 		{ id: 'w1', userId: 'user_alex_mercer', weightKg: 76.5, bodyFatPercent: 15.6, muscleMassKg: 35.8, date: '2026-10-02', notes: 'Baseline start' },
@@ -65,15 +166,6 @@ const fallbackStore = {
 		{ id: 'ex_2', routineId: 'routine_1', name: 'Incline Dumbbell Flyes', targetArea: 'Upper Chest • 3 sets × 12 reps (16 kg)', sets: 3, reps: 12, weightKg: 16, completedSets: 0, isDone: false },
 		{ id: 'ex_3', routineId: 'routine_1', name: 'Triceps Rope Pushdown', targetArea: 'Triceps • 4 sets × 15 reps (22 kg)', sets: 4, reps: 15, weightKg: 22, completedSets: 0, isDone: false }
 	],
-	wakeUpChallenge: {
-		id: 'wake_1',
-		userId: 'user_alex_mercer',
-		targetTime: '06:30 AM',
-		shakeTarget: 30,
-		currentShakes: 18,
-		isCompleted: false,
-		date: new Date().toISOString().split('T')[0]
-	},
 	waterLogs: [
 		{ id: 'wt_1', userId: 'user_alex_mercer', amountMl: 500, date: new Date().toISOString().split('T')[0] },
 		{ id: 'wt_2', userId: 'user_alex_mercer', amountMl: 500, date: new Date().toISOString().split('T')[0] },
@@ -242,20 +334,27 @@ export const repo = {
 		}
 
 		// Fallback compute
-		const totalWater = fallbackStore.waterLogs.reduce((acc, w) => acc + w.amountMl, 0);
-		const totalCalories = fallbackStore.mealLogs.reduce((acc, m) => acc + m.calories, 0);
-		const totalProtein = fallbackStore.mealLogs.reduce((acc, m) => acc + m.proteinGrams, 0);
-		const totalCarbs = fallbackStore.mealLogs.reduce((acc, m) => acc + m.carbsGrams, 0);
-		const totalFat = fallbackStore.mealLogs.reduce((acc, m) => acc + m.fatGrams, 0);
+		const targetUser = fallbackStore.users.find((u) => u.id === userId) || fallbackStore.users[0];
+		const targetProfile = fallbackStore.profiles[userId] || fallbackStore.profiles['user_alex_mercer'];
+		const targetChallenge = fallbackStore.challenges[userId] || fallbackStore.challenges['user_alex_mercer'];
+
+		const userWater = fallbackStore.waterLogs.filter((w) => w.userId === userId || w.userId === 'user_alex_mercer');
+		const userMeals = fallbackStore.mealLogs.filter((m) => m.userId === userId || m.userId === 'user_alex_mercer');
+
+		const totalWater = userWater.reduce((acc, w) => acc + w.amountMl, 0);
+		const totalCalories = userMeals.reduce((acc, m) => acc + m.calories, 0);
+		const totalProtein = userMeals.reduce((acc, m) => acc + m.proteinGrams, 0);
+		const totalCarbs = userMeals.reduce((acc, m) => acc + m.carbsGrams, 0);
+		const totalFat = userMeals.reduce((acc, m) => acc + m.fatGrams, 0);
 
 		return {
-			user: fallbackStore.user,
-			profile: fallbackStore.profile,
-			challenge: fallbackStore.wakeUpChallenge,
+			user: targetUser,
+			profile: targetProfile,
+			challenge: targetChallenge,
 			routine: fallbackStore.routine,
 			exercises: fallbackStore.exercises,
 			waterTotal: totalWater,
-			meals: fallbackStore.mealLogs,
+			meals: userMeals,
 			macros: {
 				calories: totalCalories,
 				protein: totalProtein,
@@ -493,10 +592,13 @@ export const repo = {
 				console.warn('Profile data PG error:', e);
 			}
 		}
+		const targetUser = fallbackStore.users.find((u) => u.id === userId) || fallbackStore.users[0];
+		const targetProfile = fallbackStore.profiles[userId] || fallbackStore.profiles['user_alex_mercer'];
+		const userWeightLogs = fallbackStore.weightLogs.filter((w) => w.userId === userId || w.userId === 'user_alex_mercer');
 		return {
-			user: fallbackStore.user,
-			profile: fallbackStore.profile,
-			weightHistory: fallbackStore.weightLogs
+			user: targetUser,
+			profile: targetProfile,
+			weightHistory: userWeightLogs.length > 0 ? userWeightLogs : fallbackStore.weightLogs
 		};
 	},
 
@@ -518,7 +620,11 @@ export const repo = {
 				console.warn('Update profile PG error:', e);
 			}
 		}
-		Object.assign(fallbackStore.profile, updates);
+
+		if (!fallbackStore.profiles[userId]) {
+			fallbackStore.profiles[userId] = { ...initialProfiles['user_alex_mercer'], userId };
+		}
+		Object.assign(fallbackStore.profiles[userId], updates);
 
 		// Also add a new weight log entry if currentWeightKg changed
 		if (updates.currentWeightKg) {
@@ -527,8 +633,8 @@ export const repo = {
 				id: 'w_' + Math.random().toString(36).substring(2, 9),
 				userId,
 				weightKg: updates.currentWeightKg,
-				bodyFatPercent: updates.bodyFatPercent || fallbackStore.profile.bodyFatPercent,
-				muscleMassKg: updates.muscleMassKg || fallbackStore.profile.muscleMassKg,
+				bodyFatPercent: updates.bodyFatPercent || fallbackStore.profiles[userId].bodyFatPercent,
+				muscleMassKg: updates.muscleMassKg || fallbackStore.profiles[userId].muscleMassKg,
 				date: today,
 				notes: 'Profile metric adjustment'
 			};
@@ -539,6 +645,266 @@ export const repo = {
 			}
 			fallbackStore.weightLogs.push(newLog);
 		}
-		return fallbackStore.profile;
+		return fallbackStore.profiles[userId];
+	},
+
+	// ----------------------------------------------------
+	// Authentication & Session Management
+	// ----------------------------------------------------
+	getUserById(id: string) {
+		return fallbackStore.users.find((u) => u.id === id) || null;
+	},
+
+	getUserByEmail(email: string) {
+		return fallbackStore.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim()) || null;
+	},
+
+	getAllUsers() {
+		return fallbackStore.users.map((u) => {
+			const prof = fallbackStore.profiles[u.id] || fallbackStore.profiles['user_alex_mercer'];
+			const challenge = fallbackStore.challenges[u.id] || fallbackStore.challenges['user_alex_mercer'];
+			const userSessions = fallbackStore.sessions.filter((s) => s.userId === u.id);
+			return {
+				id: u.id,
+				name: u.name,
+				email: u.email,
+				role: u.role,
+				image: u.image,
+				profile: prof,
+				challenge,
+				sessionCount: userSessions.length
+			};
+		});
+	},
+
+	getAllSessions() {
+		return fallbackStore.sessions.map((s) => {
+			const u = fallbackStore.users.find((user) => user.id === s.userId);
+			return {
+				id: s.id,
+				token: s.token,
+				userId: s.userId,
+				userName: u?.name || 'Unknown User',
+				userEmail: u?.email || 'unknown@fitdee.app',
+				userRole: u?.role || 'user',
+				createdAt: s.createdAt,
+				expiresAt: s.expiresAt
+			};
+		});
+	},
+
+	async authenticate(email: string, password?: string) {
+		const u = this.getUserByEmail(email);
+		if (!u) {
+			return { success: false, error: 'User with this email was not found.' };
+		}
+		if (password && u.password && u.password !== password) {
+			return { success: false, error: 'Incorrect password credentials.' };
+		}
+
+		// Create session
+		const sessionToken = 'fitdee_sess_' + Math.random().toString(36).substring(2, 15);
+		const newSession = {
+			id: 'sess_' + Math.random().toString(36).substring(2, 9),
+			token: sessionToken,
+			userId: u.id,
+			createdAt: new Date(),
+			expiresAt: new Date(Date.now() + 30 * 86400000)
+		};
+		fallbackStore.sessions.push(newSession);
+
+		return {
+			success: true,
+			user: u,
+			session: newSession,
+			token: sessionToken
+		};
+	},
+
+	async register(userData: { name: string; email: string; password?: string; role?: string }) {
+		const existing = this.getUserByEmail(userData.email);
+		if (existing) {
+			return { success: false, error: 'User with this email already exists.' };
+		}
+
+		const newUserId = 'user_' + Math.random().toString(36).substring(2, 9);
+		const newUser = {
+			id: newUserId,
+			name: userData.name,
+			email: userData.email,
+			password: userData.password || 'password123',
+			role: userData.role || 'user',
+			image: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userData.name)}`,
+			emailVerified: true,
+			createdAt: new Date()
+		};
+
+		fallbackStore.users.push(newUser);
+
+		// Initialize profile
+		fallbackStore.profiles[newUserId] = {
+			id: 'profile_' + newUserId,
+			userId: newUserId,
+			heightCm: 178,
+			currentWeightKg: 73.0,
+			targetWeightKg: 70.0,
+			bodyFatPercent: 15.0,
+			muscleMassKg: 35.5,
+			dailyCalorieTarget: 2300,
+			dailyWaterTargetMl: 3000,
+			fitnessLevel: 'New Athlete Protocol',
+			activeTier: '1-Year Protocol'
+		};
+
+		// Initialize challenge
+		fallbackStore.challenges[newUserId] = {
+			id: 'wake_' + newUserId,
+			userId: newUserId,
+			targetTime: '06:30 AM',
+			shakeTarget: 30,
+			currentShakes: 0,
+			isCompleted: false,
+			date: new Date().toISOString().split('T')[0]
+		};
+
+		// Create session
+		const sessionToken = 'fitdee_sess_' + Math.random().toString(36).substring(2, 15);
+		const newSession = {
+			id: 'sess_' + Math.random().toString(36).substring(2, 9),
+			token: sessionToken,
+			userId: newUserId,
+			createdAt: new Date(),
+			expiresAt: new Date(Date.now() + 30 * 86400000)
+		};
+		fallbackStore.sessions.push(newSession);
+
+		return {
+			success: true,
+			user: newUser,
+			session: newSession,
+			token: sessionToken
+		};
+	},
+
+	async validateSession(token: string) {
+		const s = fallbackStore.sessions.find((sess) => sess.token === token);
+		if (!s) return null;
+		if (new Date(s.expiresAt) < new Date()) {
+			fallbackStore.sessions = fallbackStore.sessions.filter((sess) => sess.token !== token);
+			return null;
+		}
+		const user = this.getUserById(s.userId);
+		if (!user) return null;
+		return { user, session: s };
+	},
+
+	async deleteSession(token: string) {
+		fallbackStore.sessions = fallbackStore.sessions.filter((s) => s.token !== token);
+		return true;
+	},
+
+	// ----------------------------------------------------
+	// Notification Dispatcher
+	// ----------------------------------------------------
+	async getNotifications(userId: string) {
+		return fallbackStore.notifications
+			.filter((n) => n.userId === userId || n.userId === 'all')
+			.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+	},
+
+	async createNotification(notif: { userId?: string; title: string; message: string; type?: string }) {
+		const id = 'notif_' + Math.random().toString(36).substring(2, 9);
+		const newNotif = {
+			id,
+			userId: notif.userId || 'all',
+			title: notif.title,
+			message: notif.message,
+			type: notif.type || 'info',
+			isRead: false,
+			createdAt: new Date()
+		};
+		fallbackStore.notifications.unshift(newNotif);
+		return newNotif;
+	},
+
+	async markNotificationRead(id: string) {
+		const notif = fallbackStore.notifications.find((n) => n.id === id);
+		if (notif) {
+			notif.isRead = true;
+		}
+		return true;
+	},
+
+	async clearNotifications(userId: string) {
+		fallbackStore.notifications = fallbackStore.notifications.filter(
+			(n) => (n.userId !== userId && n.userId !== 'all') || !n.isRead
+		);
+		return true;
+	},
+
+	// ----------------------------------------------------
+	// Admin Diagnostic & Live State Modifier
+	// ----------------------------------------------------
+	async adminUpdateUserData(targetUserId: string, updates: any) {
+		const user = this.getUserById(targetUserId);
+		if (!user) return { success: false, error: 'User target not found' };
+
+		if (updates.name) user.name = updates.name;
+		if (updates.email) user.email = updates.email;
+		if (updates.role) user.role = updates.role;
+
+		// Ensure profile exists
+		if (!fallbackStore.profiles[targetUserId]) {
+			fallbackStore.profiles[targetUserId] = { ...initialProfiles['user_alex_mercer'], userId: targetUserId };
+		}
+		const prof = fallbackStore.profiles[targetUserId];
+
+		if (updates.weightKg !== undefined && updates.weightKg !== null) {
+			const w = Number(updates.weightKg);
+			prof.currentWeightKg = w;
+			const newLog = {
+				id: 'w_' + Math.random().toString(36).substring(2, 9),
+				userId: targetUserId,
+				weightKg: w,
+				bodyFatPercent: updates.bodyFatPercent !== undefined ? Number(updates.bodyFatPercent) : prof.bodyFatPercent,
+				muscleMassKg: prof.muscleMassKg,
+				date: new Date().toISOString().split('T')[0],
+				notes: 'Diagnostic Admin Telemetry Override'
+			};
+			fallbackStore.weightLogs.push(newLog);
+		}
+		if (updates.targetWeightKg !== undefined) prof.targetWeightKg = Number(updates.targetWeightKg);
+		if (updates.bodyFatPercent !== undefined) prof.bodyFatPercent = Number(updates.bodyFatPercent);
+		if (updates.muscleMassKg !== undefined) prof.muscleMassKg = Number(updates.muscleMassKg);
+		if (updates.dailyCalorieTarget !== undefined) prof.dailyCalorieTarget = Number(updates.dailyCalorieTarget);
+		if (updates.dailyWaterTargetMl !== undefined) prof.dailyWaterTargetMl = Number(updates.dailyWaterTargetMl);
+		if (updates.fitnessLevel !== undefined) prof.fitnessLevel = updates.fitnessLevel;
+
+		// Ensure challenge exists
+		if (!fallbackStore.challenges[targetUserId]) {
+			fallbackStore.challenges[targetUserId] = { ...initialChallenges['user_alex_mercer'], userId: targetUserId };
+		}
+		const challenge = fallbackStore.challenges[targetUserId];
+		if (updates.currentShakes !== undefined) challenge.currentShakes = Number(updates.currentShakes);
+		if (updates.shakeTarget !== undefined) challenge.shakeTarget = Number(updates.shakeTarget);
+		challenge.isCompleted = challenge.currentShakes >= challenge.shakeTarget;
+
+		// Water adjustment
+		if (updates.waterMl !== undefined && Number(updates.waterMl) > 0) {
+			const today = new Date().toISOString().split('T')[0];
+			fallbackStore.waterLogs.push({
+				id: 'wt_' + Math.random().toString(36).substring(2, 9),
+				userId: targetUserId,
+				amountMl: Number(updates.waterMl),
+				date: today
+			});
+		}
+
+		return {
+			success: true,
+			user,
+			profile: prof,
+			challenge
+		};
 	}
 };
