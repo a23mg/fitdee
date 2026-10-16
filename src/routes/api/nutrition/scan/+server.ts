@@ -2,6 +2,17 @@ import { json } from '@sveltejs/kit';
 import { GoogleGenAI } from '@google/genai';
 import type { RequestHandler } from './$types';
 
+const NUTRITION_SYSTEM_INSTRUCTION = `You are Fitdee Vision AI, an elite sports nutrition analysis engine and clinical computer vision dietitian.
+Your singular directive is to scan meal photographs and determine accurate nutritional macro- and micronutrient breakdowns.
+
+Analysis Guidelines:
+1. Identify all visible food items, cooking methods, and beverage contents.
+2. Estimate portion size and mass (grams) using standard plate/utensil scale heuristics. Account for hidden fats (cooking oils, butter, dressings).
+3. Compute total calories (kcal), protein (g), carbohydrates (g), fat (g), and dietary fiber (g).
+4. Provide a realistic confidence rating (0-100) based on image clarity and ingredient visibility.
+5. Provide a concise, high-impact 1-2 sentence athletic fueling summary (glycemic profile, muscle protein synthesis support).
+6. Return strictly valid JSON adhering to the specified schema without any markdown formatting or commentary.`;
+
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { imageBase64 } = await request.json();
@@ -25,25 +36,34 @@ export const POST: RequestHandler = async ({ request }) => {
 									}
 								},
 								{
-									text: `You are an elite athletic nutritionist. Analyze this meal image precisely.
-Return ONLY valid JSON matching this schema:
-{
-  "foodName": "Concise meal title",
-  "calories": 0,
-  "proteinGrams": 0,
-  "carbsGrams": 0,
-  "fatGrams": 0,
-  "portionSize": "Estimated weight or serving",
-  "confidence": 95,
-  "summary": "1-2 sentence high-performance athletic fueling analysis",
-  "ingredients": ["item 1", "item 2"]
-}`
+									text: 'Scan and analyze the nutritional composition of this meal image. Deconstruct portions and quantify macros.'
 								}
 							]
 						}
 					],
 					config: {
-						responseMimeType: 'application/json'
+						systemInstruction: NUTRITION_SYSTEM_INSTRUCTION,
+						responseMimeType: 'application/json',
+						responseSchema: {
+							type: 'OBJECT',
+							properties: {
+								foodName: { type: 'STRING', description: 'Concise title of the meal or food item' },
+								calories: { type: 'INTEGER', description: 'Total estimated calories in kcal' },
+								proteinGrams: { type: 'NUMBER', description: 'Total protein in grams' },
+								carbsGrams: { type: 'NUMBER', description: 'Total carbohydrates in grams' },
+								fatGrams: { type: 'NUMBER', description: 'Total dietary fats in grams' },
+								fiberGrams: { type: 'NUMBER', description: 'Total dietary fiber in grams' },
+								portionSize: { type: 'STRING', description: 'Estimated portion mass or serving description' },
+								confidence: { type: 'INTEGER', description: 'Model confidence score between 0 and 100' },
+								summary: { type: 'STRING', description: '1-2 sentence athletic nutrition evaluation' },
+								ingredients: {
+									type: 'ARRAY',
+									items: { type: 'STRING' },
+									description: 'List of identified ingredients and components'
+								}
+							},
+							required: ['foodName', 'calories', 'proteinGrams', 'carbsGrams', 'fatGrams', 'portionSize', 'confidence', 'summary', 'ingredients']
+						}
 					}
 				});
 
@@ -59,6 +79,7 @@ Return ONLY valid JSON matching this schema:
 						proteinGrams: Number(parsed.proteinGrams) || 30,
 						carbsGrams: Number(parsed.carbsGrams) || 40,
 						fatGrams: Number(parsed.fatGrams) || 15,
+						fiberGrams: Number(parsed.fiberGrams) || 5,
 						portionSize: parsed.portionSize || '1 standard serving',
 						confidence: Number(parsed.confidence) || 94,
 						summary: parsed.summary || 'Nutrient-dense meal suitable for athletic recovery.',

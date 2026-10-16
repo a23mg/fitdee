@@ -2,6 +2,9 @@ import { json } from '@sveltejs/kit';
 import { GoogleGenAI } from '@google/genai';
 import type { RequestHandler } from './$types';
 
+const COACH_SYSTEM_INSTRUCTION = `You are Fitdee AI, an elite athletic biometric and sports nutrition coach.
+Give concise, authoritative, sports-science backed answers (maximum 2-3 sentences) on athletic nutrition, macros, pre/post workout nutrient timing, and muscle hypertrophy.`;
+
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { message } = await request.json();
@@ -15,15 +18,12 @@ export const POST: RequestHandler = async ({ request }) => {
 					contents: [
 						{
 							role: 'user',
-							parts: [
-								{
-									text: `You are Fitdee AI, an elite athletic biometric coach.
-Give concise, authoritative, sports-science backed answers (max 2-3 sentences) on athletic nutrition, macros, pre/post workout timing, and muscle hypertrophy.
-User question: "${message}"`
-								}
-							]
+							parts: [{ text: message }]
 						}
-					]
+					],
+					config: {
+						systemInstruction: COACH_SYSTEM_INSTRUCTION
+					}
 				});
 
 				const reply = response.text?.trim();

@@ -360,7 +360,7 @@
 				</div>
 
 				<!-- Macro Breakdown Grid -->
-				<div class="grid grid-cols-4 gap-2 mb-3 bg-[#121212] p-2.5 rounded-xl border border-[#2e2e32]">
+				<div class="grid grid-cols-4 gap-2 mb-2.5 bg-[#121212] p-2.5 rounded-xl border border-[#2e2e32]">
 					<div class="text-center">
 						<span class="text-[10px] text-[#a1a1aa] block font-mono">KCAL</span>
 						<span class="text-xs font-bold text-white font-mono">{scannedResult.calories}</span>
@@ -379,7 +379,35 @@
 					</div>
 				</div>
 
-				<p class="text-[11px] text-[#a1a1aa] mb-3">{scannedResult.summary}</p>
+				<!-- Portion & Fiber details -->
+				{#if scannedResult.portionSize || scannedResult.fiberGrams}
+					<div class="flex items-center justify-between text-[11px] text-[#a1a1aa] mb-2 px-1">
+						{#if scannedResult.portionSize}
+							<span class="flex items-center gap-1 font-mono text-[10px]">
+								<span class="material-symbols-outlined text-[13px] text-[#a1a1aa]">scale</span>
+								{scannedResult.portionSize}
+							</span>
+						{/if}
+						{#if scannedResult.fiberGrams}
+							<span class="font-mono text-emerald-400 text-[10px] font-semibold">
+								Fiber: {scannedResult.fiberGrams}g
+							</span>
+						{/if}
+					</div>
+				{/if}
+
+				<!-- Ingredients Pills -->
+				{#if scannedResult.ingredients && scannedResult.ingredients.length > 0}
+					<div class="flex flex-wrap gap-1 mb-2.5">
+						{#each scannedResult.ingredients as item}
+							<span class="text-[9px] px-2 py-0.5 rounded-md bg-[#121212] border border-[#2e2e32] text-[#a1a1aa]">
+								{item}
+							</span>
+						{/each}
+					</div>
+				{/if}
+
+				<p class="text-[11px] text-[#a1a1aa] mb-3 leading-relaxed">{scannedResult.summary}</p>
 
 				<button
 					type="button"
