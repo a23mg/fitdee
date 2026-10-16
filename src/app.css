@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+	--color-flame-red: #ff0101;
+	--color-crimson: #c00000;
+	--color-kinetic-coral: #ff5541;
+	--color-telemetry-blue: #488fff;
+	
+	--color-surface-lowest: #0a0a0a;
+	--color-surface-low: #121212;
+	--color-surface-container: #18181b;
+	--color-surface-high: #1c1c1e;
+	--color-surface-highest: #242426;
+	
+	--color-border-subtle: #2e2e32;
+	--color-outline: #2e2e32;
+	
+	--color-text-primary: #ffffff;
+	--color-text-secondary: #a1a1aa;
+	--color-text-muted: #71717a;
+
+	--font-headline: "Plus Jakarta Sans", sans-serif;
+	--font-mono-metric: "Space Grotesk", monospace;
+	--font-label: "Space Grotesk", sans-serif;
+}
+
+:root {
+	--bg-main: #0a0a0a;
+	--bg-card: #1c1c1e;
+	--bg-inner: #121212;
+	--border-card: #2e2e32;
+	--text-primary: #ffffff;
+	--text-secondary: #a1a1aa;
+}
+
+html:not(.dark) {
+	--bg-main: #f8f9fa;
+	--bg-card: #ffffff;
+	--bg-inner: #f1f3f5;
+	--border-card: #e5e7eb;
+	--text-primary: #111827;
+	--text-secondary: #4b5563;
+}
+
+body {
+	font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	overscroll-behavior: none;
+}
+
+.material-symbols-outlined {
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+	line-height: 1;
+	vertical-align: middle;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.pb-safe {
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pt-safe {
+	padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Hide scrollbars for clean athletic mobile UI */
+::-webkit-scrollbar {
+	display: none;
+}
+* {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}

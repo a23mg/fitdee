@@ -1,0 +1,649 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #0a0a0a;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+      main > :first-child {
+        margin-top: 0 !important;
+      }
+      main > :last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dark": "#0a0a0a",
+            "surface-card": "#1c1c1e",
+            "surface-sub": "#242426",
+            "border-dark": "#2e2e32",
+            "accent-red": "#ff0101",
+            "accent-red-hover": "#ff3333",
+            "text-muted-dark": "#a1a1aa",
+            "primary": "#ff0101",
+            "surface": "#121212"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            space: ["Space Grotesk", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0a0a0a] text-white antialiased min-h-screen flex flex-col selection:bg-[#ff0101] selection:text-white" style="letter-spacing: 0.01em; font-family: 'Plus Jakarta Sans', Inter, sans-serif !important;">
+<!-- Header -->
+<header class="fixed top-0 inset-x-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-[#2e2e32] pt-safe">
+<div class="h-16 px-4 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff0101] to-[#bc0000] flex items-center justify-center shadow-[0_2px_10px_rgba(255,1,1,0.35)] shrink-0">
+<span class="font-bold text-white text-[15px] tracking-tight">F.</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[14px] font-semibold tracking-tight text-white leading-tight">Fitdee</span>
+<span class="text-[10px] font-medium tracking-wider uppercase text-[#a1a1aa]">Trainers &amp; Gyms</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<!-- Dark/Light Mode Switch -->
+<button aria-label="Toggle Theme" class="w-9 h-9 rounded-full flex items-center justify-center text-[#a1a1aa] hover:text-white transition-colors bg-[#1c1c1e] border border-[#2e2e32]" id="theme-toggle">
+<span class="material-symbols-outlined text-[18px]">dark_mode</span>
+</button>
+<!-- Notifications -->
+<button aria-label="Notifications" class="w-9 h-9 rounded-full flex items-center justify-center text-[#a1a1aa] hover:text-white transition-colors relative bg-[#1c1c1e] border border-[#2e2e32]">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff0101] ring-2 ring-[#0a0a0a]"></span>
+</button>
+<!-- User Profile Avatar -->
+<a aria-label="Profile and Plans" class="w-9 h-9 rounded-full bg-gradient-to-br from-[#ff0101] to-[#bc0000] p-[1.5px] shadow-sm hover:scale-105 active:scale-95 transition-transform flex items-center justify-center" data-path="pricing-and-plans" href="#">
+<div class="w-full h-full rounded-full bg-[#1c1c1e] flex items-center justify-center">
+<span class="material-symbols-outlined text-[#ff3333] text-[18px]">person</span>
+</div>
+</a>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-[#0a0a0a]">
+<div class="flex flex-col w-full px-4 pb-8 space-y-4">
+<!-- Top Segmented Control -->
+<div class="w-full pt-2.5">
+<div class="relative p-1 bg-[#1c1c1e] border border-[#2e2e32] rounded-full flex items-center gap-1 shadow-inner">
+<button class="flex-1 py-1.5 px-3 rounded-full text-[12px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white shadow-[0_2px_8px_rgba(255,1,1,0.3)] whitespace-nowrap" id="tab-gyms" onclick="switchSection('gyms')">
+<span class="material-symbols-outlined text-[15px]">fitness_center</span>
+<span class="">Gym &amp; Trainers</span>
+</button>
+<button class="flex-1 py-1.5 px-3 rounded-full text-[12px] font-normal transition-all duration-300 flex items-center justify-center gap-1.5 text-[#a1a1aa] hover:text-white whitespace-nowrap" id="tab-nutrition" onclick="switchSection('nutrition')">
+<span class="material-symbols-outlined text-[15px]">restaurant_menu</span>
+<span class="">Macro Calculator &amp; Recipes</span>
+</button>
+</div>
+</div>
+<!-- SECTION 1 & 2: GYMS & TRAINERS -->
+<div class="flex flex-col w-full space-y-4" id="section-gyms">
+<!-- 3-Year VIP Pass Hero Banner -->
+<div class="relative w-full rounded-2xl bg-[#18181e] p-3.5 overflow-hidden border border-white/15 shadow-[0_8px_25px_rgba(0,0,0,0.7)]">
+<div class="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-[#ff0101]/15 blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col space-y-2">
+<div class="flex items-center justify-between gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[10px] flex items-center gap-1 font-semibold whitespace-nowrap shadow-sm">
+<span class="material-symbols-outlined text-[12px]">verified</span> 3-YEAR VIP PASS
+              </span>
+<span class="text-[10px] text-[#ff3333] flex items-center gap-1.5 bg-[#ff0101]/15 px-2.5 py-0.5 rounded-full border border-[#ff0101]/30 font-medium whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-[#ff0101] animate-pulse"></span> GPS Enabled
+              </span>
+</div>
+<div>
+<h1 class="text-[14px] font-semibold text-white tracking-tight leading-snug">Find Gyms &amp; Trainers Near You</h1>
+<p class="text-[12px] text-[#a1a1aa] font-normal leading-relaxed mt-0.5">Partner clubs and certified coaches nationwide with member rates.</p>
+</div>
+</div>
+</div>
+<!-- Gym Near Me Section -->
+<div class="flex flex-col space-y-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-md bg-[#ff0101]/15 flex items-center justify-center border border-[#ff0101]/30 shrink-0">
+<span class="material-symbols-outlined text-[#ff3333] text-[15px]">explore</span>
+</div>
+<h2 class="text-[14px] font-semibold text-white tracking-tight">Gyms Near You</h2>
+</div>
+<span class="text-[11px] text-[#ff3333] bg-[#ff0101]/15 px-2 py-0.5 rounded-full border border-[#ff0101]/30 font-medium shrink-0">4 locations</span>
+</div>
+<!-- Distance Filter Pills -->
+<div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
+<button class="px-3 py-1 rounded-full bg-[#ff0101] text-white text-[11px] font-medium shrink-0 shadow-[0_2px_8px_rgba(255,1,1,0.35)] whitespace-nowrap">All</button>
+<button class="px-3 py-1 rounded-full bg-[#1c1c1e] border border-[#2e2e32] text-[#a1a1aa] hover:text-white text-[11px] font-normal shrink-0 whitespace-nowrap">&lt; 500 m</button>
+<button class="px-3 py-1 rounded-full bg-[#1c1c1e] border border-[#2e2e32] text-[#a1a1aa] hover:text-white text-[11px] font-normal shrink-0 whitespace-nowrap">1.2 km</button>
+<button class="px-3 py-1 rounded-full bg-[#1c1c1e] border border-[#2e2e32] text-[#a1a1aa] hover:text-white text-[11px] font-normal shrink-0 whitespace-nowrap">3.0 km</button>
+<button class="px-3 py-1 rounded-full bg-[#1c1c1e] border border-[#2e2e32] text-[#a1a1aa] hover:text-white text-[11px] font-normal shrink-0 flex items-center gap-1 whitespace-nowrap">
+<span class="material-symbols-outlined text-[13px]">tune</span> Filter
+            </button>
+</div>
+<!-- Interactive Map Preview -->
+<div class="relative w-full h-36 rounded-2xl overflow-hidden shadow-[0_6px_20px_rgba(0,0,0,0.6)] border border-white/15">
+<div class="w-full h-full bg-cover bg-center brightness-75 contrast-125 saturate-50" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBnOCYun4epjPI-2Vkkt3HtMONOkAy-qf_F5M2nKaKirsUcRywrQmYIJ98jj3S89bEEg9IJy44XAaQNpDh-2s6P53dXEK-QrMYbnldEE-xP_0lf83A7fbiKf2NVdZ2-3YCfu0kZPgruJuQORbxbM7NDgPBvRM-_yBV32xUwlfvC4Eiie4yG3ELZoj7UXygNGwZmbDF16JT7iFo_e6tqasKlHcjBXnkXZ_3J66PCiWDihI7w4pcB0Epq');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/30 to-transparent"></div>
+<div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+<div class="w-7 h-7 rounded-full bg-gradient-to-b from-[#ff0101] to-[#bc0000] shadow-[0_0_15px_rgba(255,1,1,0.8)] flex items-center justify-center text-white border-2 border-[#1c1c1e]">
+<span class="material-symbols-outlined text-[15px]">fitness_center</span>
+</div>
+</div>
+<div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between bg-[#18181e]/95 backdrop-blur-md px-3 py-2 rounded-xl border border-white/15 shadow-md">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[#ff0101] text-[17px] shrink-0">location_on</span>
+<span class="text-[12px] font-medium text-white truncate">Ari Station - Rama 6 • 5 km radius</span>
+</div>
+<button class="px-3 py-1 rounded-full bg-[#ff0101] hover:bg-[#ff3333] text-white text-[11px] font-medium transition-colors shadow-[0_2px_6px_rgba(255,1,1,0.3)] shrink-0 whitespace-nowrap ml-2">Adjust Pin</button>
+</div>
+</div>
+<!-- Gym Cards List -->
+<div class="flex flex-col space-y-2.5">
+<!-- Gym 1: Pulse Athletic Club -->
+<div class="bg-[#18181e] border border-white/15 rounded-2xl p-3 flex flex-col space-y-2.5 shadow-[0_6px_20px_rgba(0,0,0,0.6)]">
+<div class="flex gap-3">
+<div class="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-[#242426] border border-[#2e2e32]">
+<img alt="Pulse Athletic Club" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdhg5yBhzB7xrp2RtBEL440i7HYYSBEsLZYshbLvzHVkEXrMq2CYxub-10t65dK6Gq9CWeCJohxlpVYLeWCGDfUP80-SgHNchh_ZKxpJAVwxSIHQAHcvB6S0KqmtWLdZncxKxIJ1_BGGybgqJ0xfAq0-UPmhgj2affcB0hWhlIb_gIHCb4zDXUJSE5i5sWe2fKTG51PqsI3SKufkuCgSF70M-Da1iWbZjJbdzyAMzbdtxz0laM3Ugq">
+</div>
+<div class="flex-1 flex flex-col justify-between min-w-0 py-0.5">
+<div>
+<div class="flex items-start justify-between gap-1.5">
+<h3 class="text-[14px] font-semibold text-white truncate">Pulse Athletic Club</h3>
+<span class="flex items-center gap-1 text-amber-400 text-[11px] font-medium shrink-0 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/25 whitespace-nowrap">
+<span class="material-symbols-outlined text-[13px] text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span> 4.9 (142)
+                      </span>
+</div>
+<p class="text-[12px] text-[#a1a1aa] flex items-center gap-1 mt-0.5 font-normal">
+<span class="material-symbols-outlined text-[13px] text-[#a1a1aa]">near_me</span> 450 m (6 min walk)
+                    </p>
+</div>
+<div class="flex flex-wrap gap-1 mt-1">
+<span class="px-2 py-0.5 rounded bg-[#242426] text-[#a1a1aa] text-[11px] font-normal border border-[#2e2e32] whitespace-nowrap">Open 24h</span>
+<span class="px-2 py-0.5 rounded bg-[#242426] text-[#a1a1aa] text-[11px] font-normal border border-[#2e2e32] whitespace-nowrap">Sauna</span>
+<span class="px-2 py-0.5 rounded bg-[#242426] text-[#a1a1aa] text-[11px] font-normal border border-[#2e2e32] whitespace-nowrap">Parking</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between bg-[#242426] px-3 py-2 rounded-xl border border-[#2e2e32]">
+<span class="text-[11px] text-[#ff3333] font-medium flex items-center gap-1 truncate pr-1">
+<span class="material-symbols-outlined text-[14px] text-[#ff0101] shrink-0">bolt</span> VIP: Unlimited Entry
+                </span>
+<button class="px-3 py-1 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[11px] font-medium shadow-[0_2px_6px_rgba(255,1,1,0.3)] hover:brightness-110 transition-all whitespace-nowrap shrink-0">Select Gym</button>
+</div>
+</div>
+<!-- Gym 2: Iron Core Fitness -->
+<div class="bg-[#18181e] border border-white/15 rounded-2xl p-3 flex flex-col space-y-2.5 shadow-[0_6px_20px_rgba(0,0,0,0.6)]">
+<div class="flex gap-3">
+<div class="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-[#242426] border border-[#2e2e32]">
+<img alt="Iron Core Fitness" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN61J8g6mWFZsCrA7NSx_tIBNdx1kXLT5X6IlmaP9dNhMG8294uvGJvozbJP-J5QoT3u6ZvO65aJQZgoeB2gR1lJgpXycaQNagD28Av87ssrVywtSAdpi3baAuklVI7C-aov__WJeFrnXswymHhYTEt98kuB7dfa5wmQ6HwiWxWQF37_RxXWhTawqHCsWqOnrURI3gNs3yXFAoYNHrweWz2iF7ov_iCa1tgX-rQD18pYlcMfKP3nvv">
+</div>
+<div class="flex-1 flex flex-col justify-between min-w-0 py-0.5">
+<div>
+<div class="flex items-start justify-between gap-1.5">
+<h3 class="text-[14px] font-semibold text-white truncate">Iron Core Fitness</h3>
+<span class="flex items-center gap-1 text-amber-400 text-[11px] font-medium shrink-0 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/25 whitespace-nowrap">
+<span class="material-symbols-outlined text-[13px] text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span> 4.8 (89)
+                      </span>
+</div>
+<p class="text-[12px] text-[#a1a1aa] flex items-center gap-1 mt-0.5 font-normal">
+<span class="material-symbols-outlined text-[13px] text-[#a1a1aa]">near_me</span> 1.2 km (4 min drive)
+                    </p>
+</div>
+<div class="flex flex-wrap gap-1 mt-1">
+<span class="px-2 py-0.5 rounded bg-[#242426] text-[#a1a1aa] text-[11px] font-normal border border-[#2e2e32] whitespace-nowrap">CrossFit</span>
+<span class="px-2 py-0.5 rounded bg-[#242426] text-[#a1a1aa] text-[11px] font-normal border border-[#2e2e32] whitespace-nowrap">Olympic Lift</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between bg-[#242426] px-3 py-2 rounded-xl border border-[#2e2e32]">
+<span class="text-[11px] text-[#ff3333] font-medium flex items-center gap-1 truncate pr-1">
+<span class="material-symbols-outlined text-[14px] text-[#ff0101] shrink-0">bolt</span> VIP: 2 Classes/Week
+                </span>
+<button class="px-3 py-1 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[11px] font-medium shadow-[0_2px_6px_rgba(255,1,1,0.3)] hover:brightness-110 transition-all whitespace-nowrap shrink-0">Select Gym</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Personal Trainer Directory -->
+<div class="flex flex-col space-y-2.5 pt-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-md bg-[#ff0101]/15 flex items-center justify-center border border-[#ff0101]/30 shrink-0">
+<span class="material-symbols-outlined text-[#ff3333] text-[15px]">sports_martial_arts</span>
+</div>
+<h2 class="text-[14px] font-semibold text-white tracking-tight">Book Private Trainer</h2>
+</div>
+<a class="text-[12px] text-[#ff3333] hover:text-[#ff0101] font-medium flex items-center gap-0.5 shrink-0" href="#">View All &gt;</a>
+</div>
+<!-- Filter chips -->
+<div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
+<button class="px-3 py-1 rounded-full bg-[#ff0101] text-white text-[11px] font-medium shrink-0 shadow-[0_2px_8px_rgba(255,1,1,0.35)] whitespace-nowrap">Weight Loss</button>
+<button class="px-3 py-1 rounded-full bg-[#1c1c1e] border border-[#2e2e32] text-[#a1a1aa] hover:text-white text-[11px] font-normal shrink-0 whitespace-nowrap">Hypertrophy</button>
+<button class="px-3 py-1 rounded-full bg-[#1c1c1e] border border-[#2e2e32] text-[#a1a1aa] hover:text-white text-[11px] font-normal shrink-0 whitespace-nowrap">Postural Rehab</button>
+</div>
+<div class="grid grid-cols-1 gap-2.5">
+<!-- Trainer 1: Coach Max -->
+<div class="bg-[#18181e] border border-white/15 rounded-2xl p-3 flex flex-col space-y-2.5 shadow-[0_6px_20px_rgba(0,0,0,0.6)]">
+<div class="flex items-center gap-3">
+<div class="relative w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-[#ff0101]/60">
+<img alt="Coach Max" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqVJjjnQpNyJlYRJ0tsbL_o7tVIjR4olYx13wKw3hZ1uGa7YBHvnY69LgiDwtyNytE8cjMVt-5VUxBnAUYOVV-6eJtZ8c9GTMsxh5jtZPdCLG1ETV_Yy6gFQqnF7gv9xgZRmo0gy6zINwkrHylYWCdLONMjzEUKT_JrdIHPFTI7z70szd2W9J2GfJExLD7RWbgX8Eqo6WHx4q7JVwfD-xW65mF6MvVD2Nwmhm9xj3rS0dyX5MYrAkP">
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[#1c1c1e]"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1.5">
+<h3 class="text-[14px] font-semibold text-white truncate">Coach Max (ACE-CPT)</h3>
+<div class="flex items-center gap-0.5 text-amber-400 text-[11px] font-medium whitespace-nowrap">
+<span class="material-symbols-outlined text-[13px] text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span> 4.95
+                    </div>
+</div>
+<p class="text-[12px] text-[#a1a1aa] truncate mt-0.5 font-normal">Metabolic Burn &amp; Kettlebell</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[#a1a1aa] text-[10px] font-medium bg-[#242426] px-2 py-0.5 rounded border border-[#2e2e32] whitespace-nowrap">7 yrs experience</span>
+<span class="text-[#a1a1aa]/70 text-[10px] whitespace-nowrap font-normal">230+ clients</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between px-3 py-2 bg-[#242426] rounded-xl border border-[#2e2e32]">
+<div class="flex flex-col min-w-0 pr-1">
+<span class="text-[10px] text-[#ff3333] uppercase font-semibold tracking-wider">VIP Member Rate</span>
+<div class="flex items-baseline gap-1">
+<span class="text-[14px] text-white font-semibold font-space">$28</span>
+<span class="text-[11px] text-[#a1a1aa]/60 line-through">$45</span>
+<span class="text-[10px] text-[#a1a1aa]">/session</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[11px] font-medium shadow-[0_2px_6px_rgba(255,1,1,0.35)] hover:brightness-110 transition-all whitespace-nowrap shrink-0">Book Session</button>
+</div>
+</div>
+<!-- Trainer 2: Coach Nan -->
+<div class="bg-[#18181e] border border-white/15 rounded-2xl p-3 flex flex-col space-y-2.5 shadow-[0_6px_20px_rgba(0,0,0,0.6)]">
+<div class="flex items-center gap-3">
+<div class="relative w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-[#ff0101]/60">
+<img alt="Coach Nan" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8JsVafyDu7KJpukRoHMbM_z8WVKYKMtXJf0NZBPqqKp1i3SKbRLFBMZYDT_heO-85E8aoavKcQaYrGMmx4p0A0WNjjlpYJ99-1v9nS1FpdRdWWBV1kHvwc_lnt136LA68zF6QnwILDXgsgLWY9nAEHdyOPRyeaoBT7rRdkVXs5CIsc3opFIUZ1MSWoP5P4nXB8FGIwTyOP0MN1wrzAvSdSpH057A9RD1xw7qagRv-LZLa-1aZM71t">
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[#1c1c1e]"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1.5">
+<h3 class="text-[14px] font-semibold text-white truncate">Coach Nan (NASM Nutritionist)</h3>
+<div class="flex items-center gap-0.5 text-amber-400 text-[11px] font-medium whitespace-nowrap">
+<span class="material-symbols-outlined text-[13px] text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span> 5.0
+                    </div>
+</div>
+<p class="text-[12px] text-[#a1a1aa] truncate mt-0.5 font-normal">Lean Nutrition &amp; Muscle Tone</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[#a1a1aa] text-[10px] font-medium bg-[#242426] px-2 py-0.5 rounded border border-[#2e2e32] whitespace-nowrap">Sports Nutritionist</span>
+<span class="text-[#a1a1aa]/70 text-[10px] whitespace-nowrap font-normal">180+ clients</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between px-3 py-2 bg-[#242426] rounded-xl border border-[#2e2e32]">
+<div class="flex flex-col min-w-0 pr-1">
+<span class="text-[10px] text-[#ff3333] uppercase font-semibold tracking-wider">VIP Member Rate</span>
+<div class="flex items-baseline gap-1">
+<span class="text-[14px] text-white font-semibold font-space">$30</span>
+<span class="text-[11px] text-[#a1a1aa]/60 line-through">$48</span>
+<span class="text-[10px] text-[#a1a1aa]">/session</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[11px] font-medium shadow-[0_2px_6px_rgba(255,1,1,0.35)] hover:brightness-110 transition-all whitespace-nowrap shrink-0">Book Session</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3 & 4: NUTRITION CALCULATOR & RECIPES -->
+<div class="hidden flex flex-col w-full space-y-4" id="section-nutrition">
+<!-- Ingredient Calculator Card -->
+<div class="w-full bg-[#1c1c1e] rounded-2xl p-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.35)] border border-[#2e2e32] flex flex-col space-y-3 relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[10px] text-[#ff3333] bg-[#ff0101]/15 px-2 py-0.5 rounded-full border border-[#ff0101]/30 flex items-center gap-1 w-fit font-semibold tracking-wider whitespace-nowrap">
+<span class="material-symbols-outlined text-[13px] text-[#ff0101]">science</span> NUTRITION CALCULATOR
+              </span>
+<h2 class="text-[14px] font-semibold text-white mt-1">Calculate Calories &amp; Macros</h2>
+<p class="text-[12px] text-[#a1a1aa] font-normal">Select ingredients to view live nutritional breakdown.</p>
+</div>
+<button class="p-1.5 rounded-full bg-[#242426] border border-[#2e2e32] text-[#a1a1aa] hover:text-[#ff3333] transition-colors shrink-0" onclick="resetIngredients()" title="Reset all">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+</button>
+</div>
+<!-- Ingredient Chips -->
+<div class="grid grid-cols-2 gap-2">
+<!-- Chicken -->
+<button class="p-2.5 rounded-xl bg-[#242426] border-2 border-[#ff0101] text-left flex items-center justify-between transition-all" id="btn-chicken" onclick="toggleIngredient('chicken')">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-[#ff3333] text-[18px] shrink-0">set_meal</span>
+<div class="min-w-0">
+<p class="text-[12px] font-medium text-white leading-tight truncate">Chicken Breast</p>
+<p class="text-[10px] text-[#a1a1aa] whitespace-nowrap">150g</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#ff0101] text-[18px] shrink-0 opacity-100" id="check-chicken">check_circle</span>
+</button>
+<!-- Brown Rice -->
+<button class="p-2.5 rounded-xl bg-[#242426] border-2 border-[#ff0101] text-left flex items-center justify-between transition-all" id="btn-rice" onclick="toggleIngredient('rice')">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-amber-400 text-[18px] shrink-0">grain</span>
+<div class="min-w-0">
+<p class="text-[12px] font-medium text-white leading-tight truncate">Brown Rice</p>
+<p class="text-[10px] text-[#a1a1aa] whitespace-nowrap">150g</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#ff0101] text-[18px] shrink-0 opacity-100" id="check-rice">check_circle</span>
+</button>
+<!-- Avocado -->
+<button class="p-2.5 rounded-xl bg-[#1c1c1e] border-2 border-[#2e2e32] text-left flex items-center justify-between transition-all" id="btn-avocado" onclick="toggleIngredient('avocado')">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-emerald-400 text-[18px] shrink-0">eco</span>
+<div class="min-w-0">
+<p class="text-[12px] font-medium text-white leading-tight truncate">Avocado</p>
+<p class="text-[10px] text-[#a1a1aa] whitespace-nowrap">50g</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#ff0101] text-[18px] shrink-0 opacity-0" id="check-avocado">check_circle</span>
+</button>
+<!-- Egg -->
+<button class="p-2.5 rounded-xl bg-[#1c1c1e] border-2 border-[#2e2e32] text-left flex items-center justify-between transition-all" id="btn-egg" onclick="toggleIngredient('egg')">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-orange-400 text-[18px] shrink-0">egg</span>
+<div class="min-w-0">
+<p class="text-[12px] font-medium text-white leading-tight truncate">Whole Egg</p>
+<p class="text-[10px] text-[#a1a1aa] whitespace-nowrap">55g</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#ff0101] text-[18px] shrink-0 opacity-0" id="check-egg">check_circle</span>
+</button>
+</div>
+<!-- Macro Summary -->
+<div class="p-2.5 bg-[#242426] rounded-xl flex flex-col space-y-2 border border-[#2e2e32]">
+<div class="flex items-baseline justify-between">
+<span class="text-[10px] text-[#a1a1aa] uppercase tracking-wider font-semibold">Total Energy</span>
+<div class="flex items-baseline gap-1">
+<span class="text-[18px] text-[#ff3333] font-bold tracking-tight font-space" id="total-kcal">395</span>
+<span class="text-[10px] text-white font-semibold">kcal</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-[#1c1c1e] flex overflow-hidden p-0.5 border border-[#2e2e32]">
+<div class="h-full bg-[#ff0101] rounded-l-full transition-all duration-300" id="bar-protein" style="width: 48%;"></div>
+<div class="h-full bg-amber-400 transition-all duration-300" id="bar-carbs" style="width: 38%;"></div>
+<div class="h-full bg-slate-500 rounded-r-full transition-all duration-300" id="bar-fat" style="width: 14%;"></div>
+</div>
+<div class="grid grid-cols-3 gap-1.5 pt-0.5 text-center">
+<div class="p-1.5 rounded-lg bg-[#1c1c1e] border border-[#ff0101]/30">
+<p class="text-[10px] text-[#ff3333] font-medium">Protein</p>
+<p class="text-[13px] font-semibold text-white mt-0.5 font-space" id="total-protein">46.5g</p>
+</div>
+<div class="p-1.5 rounded-lg bg-[#1c1c1e] border border-amber-400/30">
+<p class="text-[10px] text-amber-400 font-medium">Carbs</p>
+<p class="text-[13px] font-semibold text-white mt-0.5 font-space" id="total-carbs">36.0g</p>
+</div>
+<div class="p-1.5 rounded-lg bg-[#1c1c1e] border border-[#2e2e32]">
+<p class="text-[10px] text-[#a1a1aa] font-medium">Fat</p>
+<p class="text-[13px] font-semibold text-white mt-0.5 font-space" id="total-fat">5.8g</p>
+</div>
+</div>
+</div>
+<button class="w-full py-2 rounded-full bg-[#242426] border border-[#2e2e32] text-white hover:border-[#ff0101] text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-[#ff3333]">bookmark_add</span> Log to Daily Diary
+          </button>
+</div>
+<!-- Cooking Tutorials Section -->
+<div class="flex flex-col space-y-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-md bg-[#ff0101]/15 flex items-center justify-center border border-[#ff0101]/30 shrink-0">
+<span class="material-symbols-outlined text-[#ff3333] text-[15px]">smart_display</span>
+</div>
+<h2 class="text-[14px] font-semibold text-white tracking-tight">Clean Cooking Tutorials</h2>
+</div>
+<span class="text-[11px] text-[#ff3333] bg-[#ff0101]/15 px-2 py-0.5 rounded-full border border-[#ff0101]/30 font-medium whitespace-nowrap">Targeted Macros</span>
+</div>
+<!-- Video Recipe Card 1 -->
+<div class="bg-[#1c1c1e] rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.35)] border border-[#2e2e32] flex flex-col">
+<div class="relative w-full h-40 bg-[#242426]">
+<img alt="Herb Grilled Chicken Quinoa Bowl" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC17V-0gD6tFgggzo02JEYGhS90eIS0ZpnY-9zY1f301Ueawn2dmeB1sfi4KMWOmVDHvX9ZeyijuJ6s22gQ1iAFeQtilMk-jlEepdmfM76hj1HxftoAJnxQdwfJ1_gCfqrfDcB54qpzepaDSESoE2civCScxidx-TRJWp6YnAAPYkztss_pW0CfpQdzhLzxyGqpunL5dsyRInXMWS0DjzvVMJpQb-G5jHXgi_vW726Y1-gmoPF42sZr">
+<div class="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-transparent to-black/40"></div>
+<button class="absolute inset-0 m-auto w-10 h-10 rounded-full bg-gradient-to-tr from-[#ff0101] to-[#bc0000] text-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform border border-white/40">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/20 whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-[#ff3333]">timer</span> 12 mins
+                </span>
+<span class="px-2 py-0.5 rounded-full bg-[#bc0000] text-white text-[10px] font-medium border border-white/20 whitespace-nowrap">
+                  Easy Prep
+                </span>
+</div>
+<div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-white text-[10px] font-medium border border-white/20 whitespace-nowrap">
+                  420 kcal
+                </span>
+<span class="px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-amber-300 text-[10px] font-medium border border-white/20 whitespace-nowrap">
+                  Protein 48g
+                </span>
+</div>
+</div>
+<div class="p-3 flex flex-col space-y-1.5">
+<h3 class="text-[14px] font-semibold text-white leading-snug">
+                Herb Grilled Chicken Quinoa Bowl
+              </h3>
+<p class="text-[12px] text-[#a1a1aa] font-normal">
+                Tender seasoned chicken breast paired with steamed quinoa and healthy avocado fats.
+              </p>
+<div class="pt-1 flex items-center gap-2">
+<button class="flex-1 py-1.5 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[11px] font-medium flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(255,1,1,0.3)] hover:brightness-110 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined text-[15px]">menu_book</span> View Recipe Steps
+                </button>
+<button class="w-8 h-8 rounded-full bg-[#242426] border border-[#2e2e32] flex items-center justify-center text-[#a1a1aa] hover:text-[#ff3333] transition-colors shrink-0" title="Save recipe">
+<span class="material-symbols-outlined text-[16px]">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Video Recipe Card 2 -->
+<div class="bg-[#1c1c1e] rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.35)] border border-[#2e2e32] flex flex-col">
+<div class="relative w-full h-40 bg-[#242426]">
+<img alt="Scrambled Egg Wrap" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdhg5yBhzB7xrp2RtBEL440i7HYYSBEsLZYshbLvzHVkEXrMq2CYxub-10t65dK6Gq9CWeCJohxlpVYLeWCGDfUP80-SgHNchh_ZKxpJAVwxSIHQAHcvB6S0KqmtWLdZncxKxIJ1_BGGybgqJ0xfAq0-UPmhgj2affcB0hWhlIb_gIHCb4zDXUJSE5i5sWe2fKTG51PqsI3SKufkuCgSF70M-Da1iWbZjJbdzyAMzbdtxz0laM3Ugq">
+<div class="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-transparent to-black/40"></div>
+<button class="absolute inset-0 m-auto w-10 h-10 rounded-full bg-gradient-to-tr from-[#ff0101] to-[#bc0000] text-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform border border-white/40">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/20 whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-[#ff3333]">timer</span> 8 mins
+                </span>
+<span class="px-2 py-0.5 rounded-full bg-[#bc0000] text-white text-[10px] font-medium border border-white/20 whitespace-nowrap">
+                  Quick Breakfast
+                </span>
+</div>
+<div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-white text-[10px] font-medium border border-white/20 whitespace-nowrap">
+                  310 kcal
+                </span>
+<span class="px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-amber-300 text-[10px] font-medium border border-white/20 whitespace-nowrap">
+                  Protein 24g
+                </span>
+</div>
+</div>
+<div class="p-3 flex flex-col space-y-1.5">
+<h3 class="text-[14px] font-semibold text-white leading-snug">
+                Scrambled Egg Wrap
+              </h3>
+<p class="text-[12px] text-[#a1a1aa] font-normal">
+                High-protein fluffy scrambled eggs inside a whole wheat tortilla with fresh spinach.
+              </p>
+<div class="pt-1 flex items-center gap-2">
+<button class="flex-1 py-1.5 rounded-full bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white text-[11px] font-medium flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(255,1,1,0.3)] hover:brightness-110 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined text-[15px]">menu_book</span> View Recipe Steps
+                </button>
+<button class="w-8 h-8 rounded-full bg-[#242426] border border-[#2e2e32] flex items-center justify-center text-[#a1a1aa] hover:text-[#ff3333] transition-colors shrink-0" title="Save recipe">
+<span class="material-symbols-outlined text-[16px]">favorite</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Logic -->
+<script>
+      const ingredients = {
+        chicken: { selected: true, kcal: 240, protein: 46.5, carbs: 0, fat: 3.5 },
+        rice: { selected: true, kcal: 155, protein: 3.2, carbs: 36.0, fat: 0.8 },
+        avocado: { selected: false, kcal: 80, protein: 1.0, carbs: 4.3, fat: 7.3 },
+        egg: { selected: false, kcal: 78, protein: 6.3, carbs: 0.6, fat: 5.3 }
+      };
+
+      function updateMacroDisplay() {
+        let totalKcal = 0;
+        let totalP = 0;
+        let totalC = 0;
+        let totalF = 0;
+
+        Object.keys(ingredients).forEach(key => {
+          if (ingredients[key].selected) {
+            totalKcal += ingredients[key].kcal;
+            totalP += ingredients[key].protein;
+            totalC += ingredients[key].carbs;
+            totalF += ingredients[key].fat;
+          }
+        });
+
+        document.getElementById('total-kcal').innerText = Math.round(totalKcal);
+        document.getElementById('total-protein').innerText = totalP.toFixed(1) + 'g';
+        document.getElementById('total-carbs').innerText = totalC.toFixed(1) + 'g';
+        document.getElementById('total-fat').innerText = totalF.toFixed(1) + 'g';
+
+        const grandTotal = totalP + totalC + totalF || 1;
+        const pPercent = Math.round((totalP / grandTotal) * 100);
+        const cPercent = Math.round((totalC / grandTotal) * 100);
+        const fPercent = Math.max(0, 100 - pPercent - cPercent);
+
+        document.getElementById('bar-protein').style.width = pPercent + '%';
+        document.getElementById('bar-carbs').style.width = cPercent + '%';
+        document.getElementById('bar-fat').style.width = fPercent + '%';
+      }
+
+      function toggleIngredient(id) {
+        ingredients[id].selected = !ingredients[id].selected;
+        const btn = document.getElementById('btn-' + id);
+        const check = document.getElementById('check-' + id);
+
+        if (ingredients[id].selected) {
+          btn.classList.remove('bg-[#1c1c1e]', 'border-[#2e2e32]');
+          btn.classList.add('bg-[#242426]', 'border-[#ff0101]');
+          check.classList.remove('opacity-0');
+          check.classList.add('opacity-100');
+        } else {
+          btn.classList.add('bg-[#1c1c1e]', 'border-[#2e2e32]');
+          btn.classList.remove('bg-[#242426]', 'border-[#ff0101]');
+          check.classList.add('opacity-0');
+          check.classList.remove('opacity-100');
+        }
+        updateMacroDisplay();
+      }
+
+      function resetIngredients() {
+        Object.keys(ingredients).forEach(k => {
+          ingredients[k].selected = false;
+          const btn = document.getElementById('btn-' + k);
+          const check = document.getElementById('check-' + k);
+          btn.classList.add('bg-[#1c1c1e]', 'border-[#2e2e32]');
+          btn.classList.remove('bg-[#242426]', 'border-[#ff0101]');
+          check.classList.add('opacity-0');
+          check.classList.remove('opacity-100');
+        });
+        updateMacroDisplay();
+      }
+
+      function switchSection(target) {
+        const secGyms = document.getElementById('section-gyms');
+        const secNutr = document.getElementById('section-nutrition');
+        const tabGyms = document.getElementById('tab-gyms');
+        const tabNutr = document.getElementById('tab-nutrition');
+
+        const activeClasses = "flex-1 py-1.5 px-3 rounded-full text-[12px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#ff0101] to-[#bc0000] text-white shadow-[0_2px_8px_rgba(255,1,1,0.3)] whitespace-nowrap";
+        const inactiveClasses = "flex-1 py-1.5 px-3 rounded-full text-[12px] font-normal transition-all duration-300 flex items-center justify-center gap-1.5 text-[#a1a1aa] hover:text-white whitespace-nowrap";
+
+        if (target === 'gyms') {
+          secGyms.classList.remove('hidden');
+          secNutr.classList.add('hidden');
+          tabGyms.className = activeClasses;
+          tabNutr.className = inactiveClasses;
+        } else {
+          secGyms.classList.add('hidden');
+          secNutr.classList.remove('hidden');
+          tabNutr.className = activeClasses;
+          tabGyms.className = inactiveClasses;
+        }
+      }
+
+      // Theme toggle functionality
+      const toggleBtn = document.getElementById('theme-toggle');
+      toggleBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          document.documentElement.classList.remove('dark');
+          toggleBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">light_mode</span>';
+        } else {
+          document.documentElement.classList.add('dark');
+          toggleBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">dark_mode</span>';
+        }
+      });
+    </script>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-[#2e2e32] shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+<div class="flex items-center justify-around h-16 px-2">
+<a class="flex-1 flex flex-col items-center justify-center py-1 text-[#a1a1aa] hover:text-white transition-colors" data-path="home" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-[11px] font-normal mt-0.5 whitespace-nowrap">Home</span>
+</a>
+<a aria-current="page" class="flex-1 flex flex-col items-center justify-center py-1 transition-colors text-[#ff0101] relative font-medium" data-path="trainers-and-gyms" href="#">
+<div class="absolute -top-1 w-5 h-0.5 rounded-full bg-[#ff0101] shadow-[0_0_8px_#ff0101]"></div>
+<span class="material-symbols-outlined text-[20px]">fitness_center</span>
+<span class="text-[11px] mt-0.5 text-[#ff0101] font-semibold whitespace-nowrap">Trainers</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center py-1 text-[#a1a1aa] hover:text-white transition-colors" data-path="ai-nutrition" href="#">
+<span class="material-symbols-outlined text-[20px]">nutrition</span>
+<span class="text-[11px] font-normal mt-0.5 whitespace-nowrap">Nutrition</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center py-1 text-[#a1a1aa] hover:text-white transition-colors" data-path="pricing-and-plans" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="text-[11px] font-normal mt-0.5 whitespace-nowrap">Profile</span>
+</a>
+</div>
+</nav>
+
+
+
+
+</body></html>

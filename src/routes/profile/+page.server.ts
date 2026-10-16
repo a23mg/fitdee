@@ -1,0 +1,7 @@
+import { repo } from '#lib/server/repo';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async () => {
+	const data = await repo.getProfileData();
+	return data;
+};
