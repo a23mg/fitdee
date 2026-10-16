@@ -24,10 +24,42 @@
 	--font-label: "Space Grotesk", sans-serif;
 }
 
+:root {
+	--vh: 100dvh;
+}
+
 body {
 	font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-	overscroll-behavior: none;
+	overscroll-behavior-y: contain;
+	-webkit-tap-highlight-color: transparent;
 	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Tabular figures for numbers, counters, timers, and telemetry metrics */
+.font-mono,
+[class*="metric-val"],
+.tabular-nums {
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.02em;
+}
+
+/* Prevent headline orphaned words */
+h1, h2, h3, h4 {
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+/* Tactile micro-interactions for buttons and touch targets */
+button, a.cursor-pointer {
+	touch-action: manipulation;
+	transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease, opacity 0.15s ease;
+}
+
+button:active, a.cursor-pointer:active {
+	transform: scale(0.975);
 }
 
 .material-symbols-outlined {
@@ -37,6 +69,7 @@ body {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	user-select: none;
 }
 
 .pb-safe {

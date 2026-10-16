@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { MoveNetTracker, type Pose } from '#lib/wasm/movenet';
+	import { WakeLockManager } from '#lib/sensors/wakelock';
 
 	let videoEl: HTMLVideoElement | null = $state(null);
 	let canvasEl: HTMLCanvasElement | null = $state(null);
@@ -19,6 +20,12 @@
 	let sessionSavedMessage = $state<string | null>(null);
 	let repFlash = $state(false);
 
+	// Mobile QoL Controls
+	let facingMode = $state<'user' | 'environment'>('user');
+	let isMirrored = $state(true);
+	let wakeLock: WakeLockManager | null = null;
+	let isWakeLockActive = $state(false);
+
 	const exercises = [
 		{ id: 'squats', name: 'Barbell/Bodyweight Squat', target: 'Quads & Glutes', keyAngle: 'Knee Flexion (<= 95°)' },
 		{ id: 'pushups', name: 'Standard Pushups', target: 'Chest & Core', keyAngle: 'Elbow Depth (<= 90°)' },
@@ -27,12 +34,14 @@
 
 	onMount(() => {
 		tracker = new MoveNetTracker();
+		wakeLock = new WakeLockManager();
 	});
 
 	onDestroy(() => {
 		stopCamera();
 		clearInterval(timerInterval);
 		if (animFrameId) cancelAnimationFrame(animFrameId);
+		if (wakeLock) wakeLock.release();
 	});
 
 	async function startCamera() {
@@ -42,7 +51,7 @@
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
 				video: {
-					facingMode: 'user',
+					facingMode: facingMode,
 					width: { ideal: 640 },
 					height: { ideal: 480 }
 				}
@@ -54,6 +63,11 @@
 				isCameraRunning = true;
 				isSessionActive = true;
 				startTimer();
+
+				// Activate Screen Wake Lock to prevent phone screen from turning off mid-workout
+				if (wakeLock) {
+					isWakeLockActive = await wakeLock.request();
+				}
 
 				// Initialize MoveNet model
 				if (tracker) {
@@ -85,6 +99,23 @@
 		isSessionActive = false;
 		clearInterval(timerInterval);
 		if (animFrameId) cancelAnimationFrame(animFrameId);
+		if (wakeLock) {
+			wakeLock.release();
+			isWakeLockActive = false;
+		}
+	}
+
+	async function switchCamera() {
+		facingMode = facingMode === 'user' ? 'environment' : 'user';
+		isMirrored = facingMode === 'user';
+		if (isCameraRunning) {
+			stopCamera();
+			await startCamera();
+		}
+	}
+
+	function toggleMirror() {
+		isMirrored = !isMirrored;
 	}
 
 	function startTimer() {
@@ -134,6 +165,12 @@
 		repFlash = true;
 		setTimeout(() => { repFlash = false; }, 300);
 
+		// Mobile Haptic Vibration
+		if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+			try { navigator.vibrate([60, 40, 60]); } catch (_) {}
+		}
+
+		// Web Audio chime
 		try {
 			const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
 			const osc = audioCtx.createOscillator();
@@ -147,6 +184,16 @@
 			osc.start();
 			osc.stop(audioCtx.currentTime + 0.25);
 		} catch (e) {}
+
+		// Web Speech voice synthesis (e.g. "Rep 1", "Rep 2")
+		if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+			try {
+				const utter = new SpeechSynthesisUtterance(String(repCount));
+				utter.rate = 1.3;
+				utter.pitch = 1.1;
+				window.speechSynthesis.speak(utter);
+			} catch (_) {}
+		}
 	}
 
 	function triggerSimulatedRep() {
@@ -185,16 +232,12 @@
 			await fetch('/api/routine/exercise', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					exerciseId: 'ex_1'
-				})
+				body: JSON.stringify({ exerciseId: 'ex_1' })
 			});
 		} catch (e) {}
 
 		sessionSavedMessage = `Successfully logged ${repCount} reps of ${selectedExercise} to daily database!`;
-		setTimeout(() => {
-			sessionSavedMessage = null;
-		}, 3500);
+		setTimeout(() => { sessionSavedMessage = null; }, 3500);
 	}
 
 	function drawGuideBox(ctx: CanvasRenderingContext2D, width: number, height: number) {
@@ -249,9 +292,17 @@
 			</div>
 			<h2 class="text-sm font-bold text-white">Biomechanical Optical HUD</h2>
 		</div>
-		<span class="px-2 py-0.5 rounded bg-red-950/80 border border-red-700 text-[10px] font-mono text-[#ff3333] font-bold">
-			WASM / WEBGL 30+ FPS
-		</span>
+		<div class="flex items-center gap-1.5">
+			{#if isWakeLockActive}
+				<span class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-700 text-[9px] font-mono text-emerald-300 font-bold flex items-center gap-1" title="Screen Wake Lock Active">
+					<span class="material-symbols-outlined text-[12px]">visibility</span>
+					<span>AWAKE</span>
+				</span>
+			{/if}
+			<span class="px-2 py-0.5 rounded bg-red-950/80 border border-red-700 text-[10px] font-mono text-[#ff3333] font-bold">
+				WASM 30+ FPS
+			</span>
+		</div>
 	</div>
 
 	<!-- Exercise Selector Pills -->
@@ -275,7 +326,7 @@
 			autoplay
 			playsinline
 			muted
-			class="absolute inset-0 w-full h-full object-cover {isCameraRunning ? 'block' : 'hidden'}"
+			class="absolute inset-0 w-full h-full object-cover {isCameraRunning ? 'block' : 'hidden'} {isMirrored ? 'scale-x-[-1]' : ''}"
 		></video>
 
 		<!-- Canvas overlay for Skeleton & reticle -->
@@ -283,7 +334,7 @@
 			bind:this={canvasEl}
 			width="640"
 			height="480"
-			class="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
+			class="absolute inset-0 w-full h-full object-cover pointer-events-none z-10 {isMirrored ? 'scale-x-[-1]' : ''}"
 		></canvas>
 
 		{#if !isSessionActive}
@@ -293,7 +344,7 @@
 				</div>
 				<h3 class="text-sm font-bold text-white mb-1">MoveNet Optical Joint Tracking</h3>
 				<p class="text-xs text-[#a1a1aa] max-w-xs mb-4">
-					On-device WASM keypoint extraction with 3-point joint angle math and automated cadence counter.
+					On-device WASM keypoint extraction with 3-point joint angle math, voice rep cues, and automated cadence counter.
 				</p>
 				<button
 					type="button"
@@ -307,21 +358,47 @@
 			</div>
 		{/if}
 
-		<!-- Top HUD telemetry metrics -->
+		<!-- Top HUD telemetry metrics & Camera Controls -->
 		<div class="relative z-20 flex items-start justify-between">
-			<div class="bg-black/75 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 flex items-center gap-2">
-				<span class="w-2 h-2 rounded-full bg-[#ff0101] animate-ping"></span>
-				<span class="text-xs font-mono font-bold text-white">{formattedTime}</span>
+			<div class="flex items-center gap-1.5">
+				<div class="bg-black/75 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 flex items-center gap-2">
+					<span class="w-2 h-2 rounded-full bg-[#ff0101] animate-ping"></span>
+					<span class="text-xs font-mono font-bold text-white tabular-nums">{formattedTime}</span>
+				</div>
+
+				{#if isCameraRunning}
+					<!-- Front/Rear Camera Flipper -->
+					<button
+						type="button"
+						onclick={switchCamera}
+						aria-label="Switch Camera"
+						title="Switch Front/Rear Camera"
+						class="w-8 h-8 rounded-xl bg-black/75 hover:bg-black/90 backdrop-blur-md border border-white/10 flex items-center justify-center text-white cursor-pointer"
+					>
+						<span class="material-symbols-outlined text-[16px]">flip_camera_ios</span>
+					</button>
+
+					<!-- Mirror Mode Toggle -->
+					<button
+						type="button"
+						onclick={toggleMirror}
+						aria-label="Toggle Mirror View"
+						title="Toggle Mirror View"
+						class="w-8 h-8 rounded-xl bg-black/75 hover:bg-black/90 backdrop-blur-md border border-white/10 flex items-center justify-center {isMirrored ? 'text-[#ff0101]' : 'text-[#a1a1aa]'} cursor-pointer"
+					>
+						<span class="material-symbols-outlined text-[16px]">swap_horiz</span>
+					</button>
+				{/if}
 			</div>
 
 			<div class="flex items-center gap-2">
 				<div class="bg-black/75 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 text-right">
 					<span class="text-[9px] text-[#488fff] font-mono block">JOINT ANGLE</span>
-					<span class="text-xs font-mono font-bold text-white">{jointAngle}°</span>
+					<span class="text-xs font-mono font-bold text-white tabular-nums">{jointAngle}°</span>
 				</div>
 				<div class="bg-black/75 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 text-right">
 					<span class="text-[9px] text-[#ff3333] font-mono block">FORM SCORE</span>
-					<span class="text-xs font-mono font-bold text-white">{formScore}%</span>
+					<span class="text-xs font-mono font-bold text-white tabular-nums">{formScore}%</span>
 				</div>
 			</div>
 		</div>
@@ -329,7 +406,7 @@
 		<!-- Big Digital Rep Counter HUD -->
 		<div class="relative z-20 flex flex-col items-center justify-center pointer-events-none">
 			<span class="text-[10px] text-[#ff3333] font-mono tracking-widest uppercase font-bold">REPETITIONS</span>
-			<span class="text-6xl font-black font-mono text-white drop-shadow-[0_0_20px_rgba(255,1,1,0.7)] {repFlash ? 'scale-110 text-[#ff0101]' : ''} transition-all">
+			<span class="text-6xl font-black font-mono text-white tabular-nums drop-shadow-[0_0_20px_rgba(255,1,1,0.7)] {repFlash ? 'scale-110 text-[#ff0101]' : ''} transition-all">
 				{repCount}
 			</span>
 		</div>

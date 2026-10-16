@@ -1,16 +1,42 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { onMount, onDestroy } from 'svelte';
+	import { ShakeDetector } from '#lib/sensors/motion';
 
 	let { data }: { data: PageData } = $props();
 
 	// Reactive local copies for instantaneous optimistic UI
 	let currentShakes = $state(data.challenge?.currentShakes ?? 18);
 	let shakeTarget = $state(data.challenge?.shakeTarget ?? 30);
-	let exercises = $state(data.exercises ?? []);
+	let exercises = $state(data.exercises ? [...data.exercises] : []);
 	let waterTotal = $state(data.waterTotal ?? 1750);
 	let waterTarget = $state(data.profile?.dailyWaterTargetMl ?? 3000);
 	let isSimulatingShake = $state(false);
 	let showReminder = $state(true);
+	let isMotionSupported = $state(false);
+	let shakeDetector: ShakeDetector | null = null;
+
+	onMount(() => {
+		shakeDetector = new ShakeDetector({
+			onShake: () => {
+				simulateShake();
+			}
+		});
+		isMotionSupported = shakeDetector.start();
+	});
+
+	onDestroy(() => {
+		if (shakeDetector) shakeDetector.stop();
+	});
+
+	async function requestMotionPermission() {
+		if (shakeDetector) {
+			const granted = await shakeDetector.requestPermission();
+			if (granted) {
+				isMotionSupported = shakeDetector.start();
+			}
+		}
+	}
 
 	let shakePercent = $derived(Math.min(100, Math.round((currentShakes / (shakeTarget || 1)) * 100)));
 	let waterPercent = $derived(Math.min(100, Math.round((waterTotal / (waterTarget || 1)) * 100)));
@@ -142,14 +168,33 @@
 				></div>
 			</div>
 
-			<div class="mt-3 flex items-center justify-between gap-2">
+			<!-- Mobile Accelerometer Sensor Status -->
+			<div class="mt-2.5 flex items-center justify-between text-[10px] text-[#a1a1aa] font-mono px-1">
+				{#if isMotionSupported}
+					<span class="flex items-center gap-1.5 text-emerald-400">
+						<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+						<span>Phone Accelerometer Active: Shake device!</span>
+					</span>
+				{:else}
+					<button
+						type="button"
+						onclick={requestMotionPermission}
+						class="text-[#ff3333] hover:underline flex items-center gap-1 cursor-pointer"
+					>
+						<span class="material-symbols-outlined text-[13px]">sensors</span>
+						<span>Enable Physical Phone Shake</span>
+					</button>
+				{/if}
+			</div>
+
+			<div class="mt-2.5 flex items-center justify-between gap-2">
 				<button
 					type="button"
 					onclick={simulateShake}
 					class="flex-1 py-2 px-3 bg-[#ff0101] hover:bg-red-700 active:scale-95 text-white text-xs font-semibold rounded-xl flex items-center justify-center space-x-1.5 transition-all shadow-md cursor-pointer"
 				>
 					<span class="material-symbols-outlined text-[17px]">vibration</span>
-					<span>Simulate Shake (+1)</span>
+					<span>Shake / Tap (+1)</span>
 				</button>
 				<button
 					type="button"
