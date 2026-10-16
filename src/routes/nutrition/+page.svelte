@@ -187,19 +187,28 @@
 		}
 	}
 
-	function sendCoachQuery() {
+	async function sendCoachQuery() {
 		if (!coachQuery.trim()) return;
 		const query = coachQuery;
 		coachMessages = [...coachMessages, { sender: 'user', text: query }];
 		coachQuery = '';
 
-		setTimeout(() => {
-			let reply = 'Prioritize 30-40g of rapid-digesting whey protein isolate and 50g dextrose/maltodextrin within 45 minutes of training.';
-			if (query.toLowerCase().includes('fat') || query.toLowerCase().includes('cut')) {
-				reply = 'Maintain a 300 kcal deficit while keeping protein at 2.2g per kg of bodyweight to preserve lean contractile tissue.';
+		try {
+			const res = await fetch('/api/nutrition/coach', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ message: query })
+			});
+			const json = await res.json();
+			if (json.success && json.reply) {
+				coachMessages = [...coachMessages, { sender: 'coach', text: json.reply }];
 			}
-			coachMessages = [...coachMessages, { sender: 'coach', text: reply }];
-		}, 400);
+		} catch (e) {
+			coachMessages = [
+				...coachMessages,
+				{ sender: 'coach', text: 'Prioritize 30-40g whey protein isolate and 50g carbs within 45 minutes of training.' }
+			];
+		}
 	}
 </script>
 
