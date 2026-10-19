@@ -6,6 +6,14 @@ Based directly on the Google Stitch *Dynamic Pulse* cyber-athletic design system
 
 ---
 
+## System Architecture & Technology Stack
+
+![Fitdee System Architecture and Technology Stack](example/architecture-flow-stack.png)
+
+> **Figure 1.** High-level multi-tier system architecture and full-stack component breakdown of the Fitdee athletic protocol platform. Details client-side edge sensors, Bun/SvelteKit application gateway, dual-engine AI perception (on-device MoveNet WASM and cloud Gemini 3.8 Flash Multimodal Vision), and PostgreSQL type-safe persistence with automated resilient fallback. *(Publication formats available: [High-Resolution PNG](example/architecture-flow-stack.png) · [Vector SVG](example/architecture-flow-stack.svg))*.
+
+---
+
 ## Architecture & Features
 
 1. **Home & Daily Routine (`/`)**

@@ -1,0 +1,345 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960">
+  <foreignObject width="1600" height="960">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:1600px;height:960px;">
+
+  <!-- Academic Header -->
+  <div class="paper-header">
+    <div class="title-group">
+      <h1>Fitdee System Architecture & Technology Stack</h1>
+      <p>High-Performance Athletic Protocol Platform with On-Device WASM Biomechanics & Multimodal Foundation AI</p>
+    </div>
+    <div class="meta-badges">
+      <span class="meta-badge">SvelteKit 2 + Svelte 5</span>
+      <span class="meta-badge">Bun + Vite 8</span>
+      <span class="meta-badge">MoveNet WASM/SIMD</span>
+      <span class="meta-badge">Gemini 3.8 Flash</span>
+      <span class="meta-badge">PostgreSQL + Drizzle</span>
+    </div>
+  </div>
+
+  <div class="canvas-grid">
+
+    <!-- TIER 1: CLIENT PRESENTATION & SENSORS -->
+    <div class="tier-row color-client" id="tier-client">
+      <div class="tier-sidebar">
+        <div class="tier-label">Tier 1: Client Layer</div>
+        <div class="tier-title">Athlete Interface & Edge Sensors</div>
+        <div class="tier-tech-list">Svelte 5 Runes • Tailwind v4 • Web Sensor APIs</div>
+      </div>
+      <div class="tier-content">
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Daily Protocol HUD</span>
+            <span class="badge-tag badge-client">Route: /</span>
+          </div>
+          <div class="comp-desc">Reactive workout routines, hydration tracking, and interactive Shake-to-Awake accelerometer alarm.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">Svelte 5 $state</span>
+            <span class="tech-pill">DeviceMotion API</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">AI Vision Scanner</span>
+            <span class="badge-tag badge-client">Route: /nutrition</span>
+          </div>
+          <div class="comp-desc">Live camera viewfinder & photo capture for optical food detection and instant macronutrient breakdown.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">MediaDevices API</span>
+            <span class="tech-pill">Canvas 2D</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Pose Tracking HUD</span>
+            <span class="badge-tag badge-client">Route: /pose</span>
+          </div>
+          <div class="comp-desc">Real-time biomechanical skeleton overlay, joint angle HUD, rep counting, and posture feedback.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">WebGL / Canvas</span>
+            <span class="tech-pill">WakeLock API</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Coaches & Gyms</span>
+            <span class="badge-tag badge-client">Route: /trainers</span>
+          </div>
+          <div class="comp-desc">Verified trainer catalog, specialty filtering, 1-on-1 booking modal flow, and affiliated facilities.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">Lucide Icons</span>
+            <span class="tech-pill">Svelte Transitions</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Telemetry & Admin</span>
+            <span class="badge-tag badge-client">/profile & /admin</span>
+          </div>
+          <div class="comp-desc">Body composition metrics (BMI, Body Fat, Skeletal Muscle), historical weight charts, and ops console.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">Biometric Telemetry</span>
+            <span class="tech-pill">RBAC Guard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOW CONNECTOR 1 -->
+    <div class="flow-indicator-bar">
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-blue">▼</span>
+        <span><b>Device Sensors:</b> Camera Frames (30 FPS) • Accelerometer (Δg Motion) • Screen WakeLock</span>
+      </div>
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-green">⇅</span>
+        <span><b>Client-Edge RPC:</b> Secure JSON / Form Actions • Session Cookie Auth • Streaming Updates</span>
+      </div>
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-purple">▼</span>
+        <span><b>In-Browser Isolation:</b> Web Worker WASM Thread • SharedArrayBuffer (COOP/COEP)</span>
+      </div>
+    </div>
+
+    <!-- TIER 2: GATEWAY & APPLICATION SERVER -->
+    <div class="tier-row color-gateway" id="tier-gateway">
+      <div class="tier-sidebar">
+        <div class="tier-label">Tier 2: Edge Gateway</div>
+        <div class="tier-title">Application & Security Layer</div>
+        <div class="tier-tech-list">Bun Runtime • SvelteKit Server • Better-Auth</div>
+      </div>
+      <div class="tier-content">
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">High-Speed Bun Runtime</span>
+            <span class="badge-tag badge-gateway">Runtime</span>
+          </div>
+          <div class="comp-desc">Ultra-low latency server execution, native TypeScript engine, bundled with Vite 8 for fast build and HMR.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">Bun.js Core</span>
+            <span class="tech-pill">Vite 8 Bundler</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">SvelteKit Server Endpoints</span>
+            <span class="badge-tag badge-gateway">RPC / API</span>
+          </div>
+          <div class="comp-desc">Type-safe request handlers (+server.ts) managing nutrition scans, biometric updates, routines, and bookings.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">RequestHandler</span>
+            <span class="tech-pill">Streaming JSON</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Better-Auth & Security</span>
+            <span class="badge-tag badge-gateway">Identity</span>
+          </div>
+          <div class="comp-desc">Session token management, cryptographic password hashing, role-based access control, and admin authorization.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">Better-Auth 1.7</span>
+            <span class="tech-pill">Secure Cookies</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Concurrency & COOP / COEP</span>
+            <span class="badge-tag badge-gateway">Headers</span>
+          </div>
+          <div class="comp-desc">Cross-Origin-Opener-Policy & COEP credentialless headers enabling high-performance multithreaded WASM SIMD.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">COOP: same-origin</span>
+            <span class="tech-pill">COEP: credentialless</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOW CONNECTOR 2 -->
+    <div class="flow-indicator-bar">
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-blue">◀▶</span>
+        <span><b>Local WASM Pipeline:</b> Direct In-Browser WebGL Buffers ➔ MoveNet Model Inference ➔ 30+ FPS HUD</span>
+      </div>
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-purple">▼▲</span>
+        <span><b>Cloud Vision Dispatch:</b> Server-side @google/genai SDK ➔ Gemini 3.8 Flash ➔ Structured JSON Validation</span>
+      </div>
+    </div>
+
+    <!-- TIER 3: DUAL-ENGINE AI & VISION CORE -->
+    <div class="tier-row color-ai" id="tier-ai">
+      <div class="tier-sidebar">
+        <div class="tier-label">Tier 3: Dual AI Core</div>
+        <div class="tier-title">Intelligent Perception Engines</div>
+        <div class="tier-tech-list">MoveNet WASM SIMD (Edge) + Gemini 3.8 Flash (Cloud)</div>
+      </div>
+      <div class="tier-content">
+        <!-- Edge Vision -->
+        <div class="ai-subcard edge">
+          <div class="ai-head">
+            <h3><span style="color:#0284c7">⚡</span> Edge Biomechanical Engine (Client-Side WASM)</h3>
+            <span class="badge-tag" style="background:#e0f2fe; color:#0369a1;">Zero Latency (30+ FPS)</span>
+          </div>
+          <div class="comp-desc" style="margin-bottom:2px;">
+            Executes on-device via TensorFlow.js with WebAssembly & SIMD vector instructions for privacy-preserving optical pose tracking.
+          </div>
+          <div class="ai-pipeline-steps">
+            <div class="p-step">
+              <div class="p-step-num">Step 1</div>
+              <div class="p-step-title">Frame Acquisition</div>
+              <div class="p-step-desc">Webcam stream downsampled to tensor array via WebGL.</div>
+            </div>
+            <div class="p-step">
+              <div class="p-step-num">Step 2</div>
+              <div class="p-step-title">MoveNet Inference</div>
+              <div class="p-step-desc">WASM SIMD extracts 17 anatomical keypoints.</div>
+            </div>
+            <div class="p-step">
+              <div class="p-step-num">Step 3</div>
+              <div class="p-step-title">Kinematic Math</div>
+              <div class="p-step-desc">Vector trigonometry computes joint angles (atan2).</div>
+            </div>
+            <div class="p-step">
+              <div class="p-step-num">Step 4</div>
+              <div class="p-step-title">Rep State Machine</div>
+              <div class="p-step-desc">Hysteresis thresholds classify reps & form score.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cloud Vision -->
+        <div class="ai-subcard cloud">
+          <div class="ai-head">
+            <h3><span style="color:#7c3aed">🧠</span> Cloud Foundation AI (Multimodal Gemini Vision)</h3>
+            <span class="badge-tag" style="background:#ede9fe; color:#6d28d9;">Official @google/genai SDK</span>
+          </div>
+          <div class="comp-desc" style="margin-bottom:2px;">
+            Server-orchestrated visual nutrition analysis and sports-science conversational coaching using Gemini 3.8 Flash.
+          </div>
+          <div class="ai-pipeline-steps">
+            <div class="p-step">
+              <div class="p-step-num">Step 1</div>
+              <div class="p-step-title">Image Payload</div>
+              <div class="p-step-desc">Base64 JPEG payload received at /api/nutrition/scan.</div>
+            </div>
+            <div class="p-step">
+              <div class="p-step-num">Step 2</div>
+              <div class="p-step-title">Multimodal Prompt</div>
+              <div class="p-step-desc">Sports dietitian system instruction + meal imagery.</div>
+            </div>
+            <div class="p-step">
+              <div class="p-step-num">Step 3</div>
+              <div class="p-step-title">Strict Schema JSON</div>
+              <div class="p-step-desc">Output conforms to schema: kcal, protein, carbs, fat, fiber.</div>
+            </div>
+            <div class="p-step">
+              <div class="p-step-num">Step 4</div>
+              <div class="p-step-title">Coaching Engine</div>
+              <div class="p-step-desc">Real-time hypertrophy advice & macro compliance feedback.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOW CONNECTOR 3 -->
+    <div class="flow-indicator-bar">
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-amber">▼</span>
+        <span><b>Persistence Pipeline:</b> Validated Meal Macros & Rep Telemetry ➔ Drizzle ORM Type-Safe SQL Queries</span>
+      </div>
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-amber">⇅</span>
+        <span><b>ACID Transaction Commit:</b> PostgreSQL 16 (Local Docker or Cloud Supabase/Neon)</span>
+      </div>
+      <div class="flow-indicator-item">
+        <span class="flow-arrow-icon flow-green">▲</span>
+        <span><b>Fault Tolerance:</b> Transparent Automatic In-Memory Fallback Repository (Zero Crashes)</span>
+      </div>
+    </div>
+
+    <!-- TIER 4: PERSISTENCE & DATA LAYER -->
+    <div class="tier-row color-storage" id="tier-storage">
+      <div class="tier-sidebar">
+        <div class="tier-label">Tier 4: Persistence</div>
+        <div class="tier-title">Data Storage & Fallback Layer</div>
+        <div class="tier-tech-list">PostgreSQL 16 • Drizzle ORM • Dual-Mode Storage</div>
+      </div>
+      <div class="tier-content">
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">PostgreSQL Database</span>
+            <span class="badge-tag badge-storage">Primary DB</span>
+          </div>
+          <div class="comp-desc">ACID relational database deployed locally via Docker Compose or connected to cloud instances (Supabase/Neon).</div>
+          <div class="comp-footer">
+            <span class="tech-pill">PostgreSQL 16</span>
+            <span class="tech-pill">Docker Compose</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Drizzle ORM & Migrations</span>
+            <span class="badge-tag badge-storage">Type Safety</span>
+          </div>
+          <div class="comp-desc">Zero-overhead, TypeScript-first SQL schema definition and query generation with automatic migration tooling.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">drizzle-orm</span>
+            <span class="tech-pill">drizzle-kit</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Domain Schemas</span>
+            <span class="badge-tag badge-storage">Telemetry Models</span>
+          </div>
+          <div class="comp-desc">Structured tables: Athlete Users, Auth Sessions, Daily Routines, Biometrics History, Meal Logs, and Bookings.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">Typed Entities</span>
+            <span class="tech-pill">Foreign Keys</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="comp-header">
+            <span class="comp-title">Dual-Mode Resilient Fallback</span>
+            <span class="badge-tag badge-storage">Zero Downtime</span>
+          </div>
+          <div class="comp-desc">Automated in-memory fallback layer maintaining uninterrupted application availability if PostgreSQL is offline.</div>
+          <div class="comp-footer">
+            <span class="tech-pill">src/lib/server/repo.ts</span>
+            <span class="tech-pill">In-Memory Cache</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Academic Figure Caption -->
+  <div class="paper-caption">
+    <div class="caption-text">
+      <span class="caption-bold">Figure 1.</span> Architectural flow and multi-tier technology stack of the Fitdee athletic protocol platform, depicting client-side sensor capture, edge application routing, dual-engine AI perception (on-device MoveNet WASM and cloud Gemini 3.8 Flash Vision), and type-safe persistence with automated in-memory fault tolerance.
+    </div>
+    <div class="caption-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div> Client Tier</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#059669;"></div> Gateway Tier</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div> AI/ML Tier</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d97706;"></div> Persistence Tier</div>
+    </div>
+  </div>
+
+</div>
+  </foreignObject>
+</svg>
