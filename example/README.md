@@ -12,7 +12,7 @@ This directory contains publication-ready architectural figures and high-resolut
 > The diagram illustrates the 4-tier integrated topology:  
 > 1. **Client & Sensor Tier:** Reactive Svelte 5 Runes interfaces leveraging HTML5 MediaDevices (camera), Accelerometer (DeviceMotion), and Screen WakeLock APIs.  
 > 2. **Edge & Gateway Tier:** Ultra-fast Bun runtime with Vite 8 bundler, SvelteKit server endpoints, Better-Auth session security, and COOP/COEP isolation headers.  
-> 3. **Dual-Engine AI Core:** Client-side zero-latency (30+ FPS) MoveNet WASM/SIMD biomechanics paired with cloud-hosted Gemini 3.8 Flash Multimodal Vision via `@google/genai` for structured macro deconstruction and sports nutrition coaching.  
+> 3. **Dual-Engine AI Core:** Client-side zero-latency (30+ FPS) MoveNet + OpenCV.js WASM biomechanics (optical velocity vectoring, concentric/eccentric cadence, exponential jitter smoothing) paired with cloud-hosted Gemini 3.8 Flash Multimodal Vision via `@google/genai` for structured macro deconstruction and sports nutrition coaching.  
 > 4. **Persistence & Telemetry Tier:** PostgreSQL 16 managed via Drizzle ORM schemas, backed by transparent in-memory fault-tolerant fallback execution.  
 >  
 > *Downloads: [High-Resolution PNG (3200×1920)](architecture-flow-stack.png) · [Scalable Vector SVG](architecture-flow-stack.svg)*
@@ -46,12 +46,12 @@ All screenshots were captured at native **iPhone 16 viewport specifications**:
 
 ---
 
-### Real-Time MoveNet Optical Pose Tracking (`/pose`)
+### Real-Time MoveNet & OpenCV.js Optical Pose Tracking (`/pose`)
 
 | Pose Tracking Setup (`03-pose.png`) | Active Biomechanical HUD (`03-pose-active.png`) |
 | :---: | :---: |
 | [![Pose Tracking Setup](03-pose.png)](03-pose.png) | [![Active Biomechanical HUD](03-pose-active.png)](03-pose-active.png) |
-| **Exercise Selector & Calibrator**<br>Pre-workout camera reticle alignment, target exercise selector (Squats, Pushups, Lateral Raises), and privacy-first local WASM pipeline notice. | **Real-Time Skeleton & Form HUD**<br>30+ FPS joint angle telemetry, optical rep counter, dynamic form score (`98%`), and real-time posture correction cues. |
+| **Exercise Selector & Calibrator**<br>Pre-workout camera reticle alignment, target exercise selector (Squats, Pushups, Lateral Raises), and privacy-first local WASM pipeline notice with client-side IndexedDB & Cache API model persistence. | **Real-Time Skeleton & Form HUD**<br>30+ FPS joint angle telemetry, OpenCV.js exponential jitter filtering, optical rep counter, dynamic form score (`98%`), and real-time posture correction cues. |
 
 ---
 

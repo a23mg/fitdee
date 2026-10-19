@@ -15,6 +15,9 @@ export interface Pose {
 	score?: number;
 }
 
+import { openCVKinematics, type KinematicMetric } from './opencv.js';
+import { modelCache } from './model-cache.js';
+
 export interface FormFeedback {
 	repCount: number;
 	state: string;
@@ -22,6 +25,9 @@ export interface FormFeedback {
 	formScore: number;
 	message: string;
 	isPeak: boolean;
+	angularVelocity?: number;
+	motionPhase?: string;
+	isOpenCvSmoothed?: boolean;
 }
 
 export const SKELETON_PAIRS: [number, number][] = [
@@ -63,6 +69,10 @@ export class MoveNetTracker {
 		if (typeof window === 'undefined') return false;
 
 		try {
+			// Query client-side binary and model storage status
+			const status = await modelCache.getCacheStatus();
+			console.log(`[MoveNet] Client storage readiness: IndexedDB=${status.isIndexedDBAvailable}, CacheAPI=${status.isCacheApiAvailable}`);
+
 			// Dynamic client-side import of TFJS and MoveNet detector
 			const tf = await import('@tensorflow/tfjs-core');
 			await import('@tensorflow/tfjs-backend-webgl');
@@ -74,7 +84,7 @@ export class MoveNetTracker {
 				enableSmoothing: true
 			});
 			this.isInitialized = true;
-			console.log('✅ Fitdee MoveNet Engine initialized successfully (WebGL/WASM).');
+			console.log('✅ Fitdee MoveNet Engine initialized successfully (WebGL/WASM with client-side cache persistence).');
 			return true;
 		} catch (err) {
 			console.warn('MoveNet live model initialization fallback mode:', err);
@@ -90,6 +100,7 @@ export class MoveNetTracker {
 		this.lastAngle = 180;
 		this.formScore = 98;
 		this.currentFeedback = 'Position ready. Begin movement.';
+		openCVKinematics.reset();
 	}
 
 	getRepCount() {
@@ -99,6 +110,7 @@ export class MoveNetTracker {
 	resetReps() {
 		this.repCount = 0;
 		this.repStage = 'up';
+		openCVKinematics.reset();
 	}
 
 	async estimatePose(video: HTMLVideoElement): Promise<Pose | null> {
@@ -129,6 +141,7 @@ export class MoveNetTracker {
 
 		let angle = 180;
 		let isPeak = false;
+		let kinematicMetric: KinematicMetric | null = null;
 
 		if (this.exercise === 'squats') {
 			// Knee flexion: Hip (11/12), Knee (13/14), Ankle (15/16)
@@ -142,7 +155,9 @@ export class MoveNetTracker {
 			const ankle = isLeft ? kps[15] : kps[16];
 
 			if (hip && knee && ankle) {
-				angle = calculateAngle(hip, knee, ankle);
+				const rawAngle = calculateAngle(hip, knee, ankle);
+				kinematicMetric = openCVKinematics.filterJointAngle(rawAngle);
+				angle = kinematicMetric.smoothedAngle;
 				this.lastAngle = angle;
 
 				// Squat State Machine
@@ -178,7 +193,9 @@ export class MoveNetTracker {
 			const wrist = isLeft ? kps[9] : kps[10];
 
 			if (shoulder && elbow && wrist) {
-				angle = calculateAngle(shoulder, elbow, wrist);
+				const rawAngle = calculateAngle(shoulder, elbow, wrist);
+				kinematicMetric = openCVKinematics.filterJointAngle(rawAngle);
+				angle = kinematicMetric.smoothedAngle;
 				this.lastAngle = angle;
 
 				// Pushup State Machine
@@ -209,7 +226,9 @@ export class MoveNetTracker {
 			const wrist = isLeft ? kps[9] : kps[10];
 
 			if (shoulder && elbow && wrist) {
-				angle = calculateAngle(shoulder, elbow, wrist);
+				const rawAngle = calculateAngle(shoulder, elbow, wrist);
+				kinematicMetric = openCVKinematics.filterJointAngle(rawAngle);
+				angle = kinematicMetric.smoothedAngle;
 				this.lastAngle = angle;
 
 				// Curl State Machine: peak <= 50, extension >= 150
@@ -238,7 +257,10 @@ export class MoveNetTracker {
 			angle: this.lastAngle,
 			formScore: this.formScore,
 			message: this.currentFeedback,
-			isPeak
+			isPeak,
+			angularVelocity: kinematicMetric?.angularVelocity,
+			motionPhase: kinematicMetric?.motionPhase,
+			isOpenCvSmoothed: kinematicMetric?.isSmoothedByOpenCV ?? true
 		};
 	}
 

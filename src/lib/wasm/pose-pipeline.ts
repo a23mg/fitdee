@@ -23,6 +23,7 @@ export interface PoseFrame {
 export interface PoseDetectorConfig {
 	modelType: 'movenet_lightning' | 'movenet_thunder';
 	enableWasmSimd: boolean;
+	enableOpenCVKinematics: boolean;
 	minConfidence: number;
 }
 
@@ -35,6 +36,7 @@ export class PosePipelineManager {
 	constructor(private config: PoseDetectorConfig = {
 		modelType: 'movenet_lightning',
 		enableWasmSimd: true,
+		enableOpenCVKinematics: true,
 		minConfidence: 0.4
 	}) {}
 

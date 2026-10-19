@@ -350,7 +350,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="meta-badges">
       <span class="meta-badge">SvelteKit 2 + Svelte 5</span>
       <span class="meta-badge">Bun + Vite 8</span>
-      <span class="meta-badge">MoveNet WASM/SIMD</span>
+      <span class="meta-badge">MoveNet + OpenCV WASM</span>
       <span class="meta-badge">Gemini 3.8 Flash</span>
       <span class="meta-badge">PostgreSQL + Drizzle</span>
     </div>
@@ -506,7 +506,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="flow-indicator-bar">
       <div class="flow-indicator-item">
         <span class="flow-arrow-icon flow-blue">◀▶</span>
-        <span><b>Local WASM Pipeline:</b> Direct In-Browser WebGL Buffers ➔ MoveNet Model Inference ➔ 30+ FPS HUD</span>
+        <span><b>Edge WASM Pipeline:</b> Direct WebGL Buffers ➔ MoveNet Keypoints ➔ OpenCV.js Kinematic Filtering ➔ 30+ FPS HUD</span>
       </div>
       <div class="flow-indicator-item">
         <span class="flow-arrow-icon flow-purple">▼▲</span>
@@ -519,17 +519,17 @@ const htmlContent = `<!DOCTYPE html>
       <div class="tier-sidebar">
         <div class="tier-label">Tier 3: Dual AI Core</div>
         <div class="tier-title">Intelligent Perception Engines</div>
-        <div class="tier-tech-list">MoveNet WASM SIMD (Edge) + Gemini 3.8 Flash (Cloud)</div>
+        <div class="tier-tech-list">MoveNet + OpenCV WASM (Edge) • Gemini 3.8 Flash (Cloud)</div>
       </div>
       <div class="tier-content">
         <!-- Edge Vision -->
         <div class="ai-subcard edge">
           <div class="ai-head">
-            <h3><span style="color:#0284c7">⚡</span> Edge Biomechanical Engine (Client-Side WASM)</h3>
+            <h3><span style="color:#0284c7">⚡</span> Edge Biomechanics (MoveNet + OpenCV.js WASM)</h3>
             <span class="badge-tag" style="background:#e0f2fe; color:#0369a1;">Zero Latency (30+ FPS)</span>
           </div>
           <div class="comp-desc" style="margin-bottom:2px;">
-            Executes on-device via TensorFlow.js with WebAssembly & SIMD vector instructions for privacy-preserving optical pose tracking.
+            Executes on-device via TensorFlow.js MoveNet & OpenCV.js WebAssembly for privacy-preserving pose tracking, optical velocity, and kinematic smoothing.
           </div>
           <div class="ai-pipeline-steps">
             <div class="p-step">
@@ -544,13 +544,13 @@ const htmlContent = `<!DOCTYPE html>
             </div>
             <div class="p-step">
               <div class="p-step-num">Step 3</div>
-              <div class="p-step-title">Kinematic Math</div>
-              <div class="p-step-desc">Vector trigonometry computes joint angles (atan2).</div>
+              <div class="p-step-title">OpenCV Kinematics</div>
+              <div class="p-step-desc">Vector geometry, exponential smoothing & angular velocity.</div>
             </div>
             <div class="p-step">
               <div class="p-step-num">Step 4</div>
               <div class="p-step-title">Rep State Machine</div>
-              <div class="p-step-desc">Hysteresis thresholds classify reps & form score.</div>
+              <div class="p-step-desc">Kinematic hysteresis thresholds classify reps & form score.</div>
             </div>
           </div>
         </div>
@@ -669,7 +669,7 @@ const htmlContent = `<!DOCTYPE html>
   <!-- Academic Figure Caption -->
   <div class="paper-caption">
     <div class="caption-text">
-      <span class="caption-bold">Figure 1.</span> Architectural flow and multi-tier technology stack of the Fitdee athletic protocol platform, depicting client-side sensor capture, edge application routing, dual-engine AI perception (on-device MoveNet WASM and cloud Gemini 3.8 Flash Vision), and type-safe persistence with automated in-memory fault tolerance.
+      <span class="caption-bold">Figure 1.</span> Architectural flow and multi-tier technology stack of the Fitdee athletic protocol platform, depicting client-side sensor capture, edge application routing, dual-engine AI perception (on-device MoveNet & OpenCV.js WASM biomechanics and cloud Gemini 3.8 Flash Vision), and type-safe persistence with automated in-memory fault tolerance.
     </div>
     <div class="caption-legend">
       <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div> Client Tier</div>
