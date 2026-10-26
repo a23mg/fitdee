@@ -1,32 +1,51 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { repo } from '#lib/server/repo';
+import { auth } from '$lib/server/auth';
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { name, email, password } = await request.json();
 
-		if (!name || !email) {
-			return json({ success: false, error: 'Name and email are required' }, { status: 400 });
+		if (!name || !email || !password) {
+			return json(
+				{ success: false, error: 'Name, email and password are all required' },
+				{ status: 400 }
+			);
 		}
 
-		const result = await repo.register({ name, email, password });
-
-		if (!result.success || !result.token) {
-			return json({ success: false, error: result.error || 'Registration failed' }, { status: 400 });
+		if (password.length < 6) {
+			return json(
+				{ success: false, error: 'Password must be at least 6 characters long' },
+				{ status: 400 }
+			);
 		}
 
-		cookies.set('fitdee_session_token', result.token, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			maxAge: 30 * 24 * 60 * 60
+		const response = await auth.api.signUpEmail({
+			body: { name, email, password },
+			asResponse: true
 		});
-		cookies.delete('fitdee_logged_out', { path: '/' });
 
-		return json({
-			success: true,
-			user: result.user
-		});
+		const setCookie = response.headers.get('set-cookie');
+		const headers = new Headers();
+		if (setCookie) {
+			headers.set('set-cookie', setCookie);
+		}
+
+		if (!response.ok) {
+			const errData = await response.json().catch(() => ({ message: 'Registration failed' }));
+			return json(
+				{ success: false, error: errData.message || 'User already exists or registration failed' },
+				{ status: response.status, headers }
+			);
+		}
+
+		const data = await response.json();
+		return json(
+			{
+				success: true,
+				user: data.user
+			},
+			{ headers }
+		);
 	} catch (err: any) {
 		return json({ success: false, error: err.message || 'Server error' }, { status: 500 });
 	}

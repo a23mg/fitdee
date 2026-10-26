@@ -1,32 +1,41 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { repo } from '#lib/server/repo';
+import { auth } from '$lib/server/auth';
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { email, password } = await request.json();
 
-		if (!email) {
-			return json({ success: false, error: 'Email is required' }, { status: 400 });
+		if (!email || !password) {
+			return json({ success: false, error: 'Email and password are required' }, { status: 400 });
 		}
 
-		const result = await repo.authenticate(email, password);
+		const response = await auth.api.signInEmail({
+			body: { email, password },
+			asResponse: true
+		});
 
-		if (!result.success || !result.token) {
-			return json({ success: false, error: result.error || 'Authentication failed' }, { status: 401 });
+		const setCookie = response.headers.get('set-cookie');
+		const headers = new Headers();
+		if (setCookie) {
+			headers.set('set-cookie', setCookie);
 		}
 
-		cookies.set('fitdee_session_token', result.token, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			maxAge: 30 * 24 * 60 * 60
-		});
-		cookies.delete('fitdee_logged_out', { path: '/' });
+		if (!response.ok) {
+			const errData = await response.json().catch(() => ({ message: 'Invalid credentials' }));
+			return json(
+				{ success: false, error: errData.message || 'Invalid email or password' },
+				{ status: response.status, headers }
+			);
+		}
 
-		return json({
-			success: true,
-			user: result.user
-		});
+		const data = await response.json();
+		return json(
+			{
+				success: true,
+				user: data.user
+			},
+			{ headers }
+		);
 	} catch (err: any) {
 		return json({ success: false, error: err.message || 'Server error' }, { status: 500 });
 	}

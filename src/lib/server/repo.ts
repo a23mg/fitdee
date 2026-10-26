@@ -659,7 +659,35 @@ export const repo = {
 		return fallbackStore.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim()) || null;
 	},
 
-	getAllUsers() {
+	async getAllUsers() {
+		const isPg = await checkPostgres();
+		if (isPg) {
+			try {
+				const dbUsers = await db.select().from(schema.user);
+				const dbProfiles = await db.select().from(schema.profiles);
+				const dbChallenges = await db.select().from(schema.wakeUpChallenges);
+				const dbSessions = await db.select().from(schema.session);
+
+				return dbUsers.map((u) => {
+					const prof = dbProfiles.find((p) => p.userId === u.id) || fallbackStore.profiles['user_alex_mercer'];
+					const chal = dbChallenges.find((c) => c.userId === u.id) || fallbackStore.challenges['user_alex_mercer'];
+					const userSessions = dbSessions.filter((s) => s.userId === u.id);
+					return {
+						id: u.id,
+						name: u.name,
+						email: u.email,
+						role: u.role,
+						image: u.image || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.name)}`,
+						profile: prof,
+						challenge: chal,
+						sessionCount: userSessions.length
+					};
+				});
+			} catch (e) {
+				console.warn('getAllUsers PG error:', e);
+			}
+		}
+
 		return fallbackStore.users.map((u) => {
 			const prof = fallbackStore.profiles[u.id] || fallbackStore.profiles['user_alex_mercer'];
 			const challenge = fallbackStore.challenges[u.id] || fallbackStore.challenges['user_alex_mercer'];
@@ -677,7 +705,30 @@ export const repo = {
 		});
 	},
 
-	getAllSessions() {
+	async getAllSessions() {
+		const isPg = await checkPostgres();
+		if (isPg) {
+			try {
+				const dbSessions = await db.select().from(schema.session);
+				const dbUsers = await db.select().from(schema.user);
+				return dbSessions.map((s) => {
+					const u = dbUsers.find((user) => user.id === s.userId);
+					return {
+						id: s.id,
+						token: s.token,
+						userId: s.userId,
+						userName: u?.name || 'Unknown User',
+						userEmail: u?.email || 'unknown@fitdee.app',
+						userRole: u?.role || 'user',
+						createdAt: s.createdAt,
+						expiresAt: s.expiresAt
+					};
+				});
+			} catch (e) {
+				console.warn('getAllSessions PG error:', e);
+			}
+		}
+
 		return fallbackStore.sessions.map((s) => {
 			const u = fallbackStore.users.find((user) => user.id === s.userId);
 			return {

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
-
 	let email = $state('alex@fitdee.app');
 	let password = $state('password123');
 	let error = $state<string | null>(null);
@@ -17,8 +15,7 @@
 			});
 			const json = await res.json();
 			if (json.success) {
-				await invalidateAll();
-				goto('/');
+				window.location.href = '/';
 			} else {
 				error = json.error || 'Authentication failed';
 			}
@@ -67,7 +64,7 @@
 			>
 				<p class="text-xs font-bold text-white group-hover:text-[#ff3333] transition-colors">Alex Mercer</p>
 				<p class="text-[10px] text-[#a1a1aa] font-mono">alex@fitdee.app</p>
-				<span class="inline-block mt-1 px-1.5 py-0.2 rounded text-[8px] bg-red-950 text-red-400 border border-red-800">Athlete</span>
+				<span class="inline-block mt-1 px-1.5 py-0.2 rounded text-[8px] bg-red-950 text-red-400 border border-red-800">Demo Athlete</span>
 			</button>
 
 			<button

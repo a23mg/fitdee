@@ -1,19 +1,26 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { repo } from '#lib/server/repo';
+import { auth } from '$lib/server/auth';
 
-export const POST: RequestHandler = async ({ cookies }) => {
-	const sessionToken = cookies.get('fitdee_session_token');
-	if (sessionToken) {
-		await repo.deleteSession(sessionToken);
+export const POST: RequestHandler = async ({ request, cookies }) => {
+	try {
+		const response = await auth.api.signOut({
+			headers: request.headers,
+			asResponse: true
+		});
+
+		cookies.delete('better-auth.session_token', { path: '/' });
+		cookies.delete('fitdee_session_token', { path: '/' });
+
+		const setCookie = response.headers.get('set-cookie');
+		const headers = new Headers();
+		if (setCookie) {
+			headers.set('set-cookie', setCookie);
+		}
+
+		return json({ success: true }, { headers });
+	} catch (err: any) {
+		cookies.delete('better-auth.session_token', { path: '/' });
+		cookies.delete('fitdee_session_token', { path: '/' });
+		return json({ success: true });
 	}
-
-	cookies.delete('fitdee_session_token', { path: '/' });
-	cookies.set('fitdee_logged_out', '1', {
-		path: '/',
-		httpOnly: true,
-		sameSite: 'lax',
-		maxAge: 30 * 24 * 60 * 60
-	});
-
-	return json({ success: true });
 };

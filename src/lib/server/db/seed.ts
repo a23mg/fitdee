@@ -6,7 +6,7 @@ export async function seedDatabase() {
 	console.log('--- Initializing database tables & seed data ---');
 
 	// Create tables if not exists
-	await client`
+	await client.unsafe(`
 		CREATE TABLE IF NOT EXISTS "user" (
 			id TEXT PRIMARY KEY,
 			name TEXT NOT NULL,
@@ -171,7 +171,7 @@ export async function seedDatabase() {
 			notes TEXT,
 			created_at TIMESTAMP NOT NULL DEFAULT now()
 		);
-	`;
+	`);
 
 	const today = new Date().toISOString().split('T')[0];
 

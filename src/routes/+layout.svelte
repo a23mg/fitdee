@@ -197,9 +197,9 @@
 		showUserMenu = false;
 		try {
 			await fetch('/api/auth/logout', { method: 'POST' });
-			await invalidateAll();
-			goto('/login');
-		} catch (_) {}
+		} finally {
+			window.location.href = '/login';
+		}
 	}
 
 	async function switchAccount(userId: string) {

@@ -1,7 +1,11 @@
 {
 	"extends": "$app/tsconfig",
 	"compilerOptions": {
-		"strict": true
+		"strict": true,
+		"skipLibCheck": true
 	},
-	"include": ["src", "vite.config.ts"]
+	"include": [
+		"src",
+		"vite.config.ts"
+	]
 }

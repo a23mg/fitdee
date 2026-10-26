@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
-
 	let name = $state('');
 	let email = $state('');
 	let password = $state('');
@@ -18,8 +16,7 @@
 			});
 			const json = await res.json();
 			if (json.success) {
-				await invalidateAll();
-				goto('/');
+				window.location.href = '/';
 			} else {
 				error = json.error || 'Registration failed';
 			}
@@ -84,8 +81,9 @@
 				id="reg-password-input"
 				type="password"
 				required
+				minlength="6"
 				bind:value={password}
-				placeholder="••••••••"
+				placeholder="Minimum 6 characters"
 				class="w-full px-3.5 py-2.5 rounded-xl bg-[#121212] border border-[#2e2e32] text-white text-xs focus:border-[#ff0101] focus:outline-none"
 			/>
 		</div>
@@ -101,7 +99,7 @@
 
 		<div class="text-center pt-2">
 			<a href="/login" class="text-xs text-[#a1a1aa] hover:text-white transition-colors">
-				Already have an account? <span class="text-[#ff3333] font-semibold underline underline-offset-4">Sign In</span>
+				Already have an athlete account? <span class="text-[#ff3333] font-semibold underline underline-offset-4">Sign In</span>
 			</a>
 		</div>
 	</form>
