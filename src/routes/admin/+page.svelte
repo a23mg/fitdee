@@ -189,7 +189,7 @@
 			<div class="pt-2">
 				<button
 					type="button"
-					onclick={() => switchAccount('user_admin_ops')}
+					onclick={() => switchAccount('admin@fitdee.app')}
 					class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff0101] to-[#cc0000] text-white text-xs font-bold tracking-wide hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-red-950/50 cursor-pointer inline-flex items-center gap-2"
 				>
 					<span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>

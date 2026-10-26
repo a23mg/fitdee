@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!currentUser) {
 		throw redirect(303, '/login');
 	}
-	const isAdmin = currentUser.role === 'admin';
+	const isAdmin = currentUser.role === 'admin' || currentUser.email === 'admin@fitdee.app';
 	const users = await repo.getAllUsers();
 	const sessions = await repo.getAllSessions();
 

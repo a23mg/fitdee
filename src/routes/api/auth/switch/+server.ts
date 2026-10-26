@@ -1,21 +1,33 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { repo } from '#lib/server/repo';
-import { auth } from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import * as schema from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { auth } from '#lib/server/auth';
+import { db } from '#lib/server/db';
+import * as schema from '#lib/server/db/schema';
+import { eq, or } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
 		const { userId } = await request.json();
 
 		let userEmail: string | undefined;
-		const [dbUser] = await db.select().from(schema.user).where(eq(schema.user.id, userId)).limit(1);
-		if (dbUser) {
-			userEmail = dbUser.email;
+
+		if (userId === 'user_admin_ops' || userId === 'admin@fitdee.app') {
+			userEmail = 'admin@fitdee.app';
+		} else if (userId === 'user_alex_mercer' || userId === 'alex@fitdee.app') {
+			userEmail = 'alex@fitdee.app';
 		} else {
-			const u = repo.getUserById(userId);
-			userEmail = u?.email;
+			const [dbUser] = await db
+				.select()
+				.from(schema.user)
+				.where(or(eq(schema.user.id, userId), eq(schema.user.email, userId)))
+				.limit(1);
+
+			if (dbUser) {
+				userEmail = dbUser.email;
+			} else {
+				const u = repo.getUserById(userId);
+				userEmail = u?.email;
+			}
 		}
 
 		if (!userEmail) {

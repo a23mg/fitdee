@@ -10,11 +10,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 
 		if (sessionData?.user) {
+			const role =
+				(sessionData.user as any).role ||
+				(sessionData.user.email === 'admin@fitdee.app' ? 'admin' : 'user');
+
 			event.locals.user = {
 				id: sessionData.user.id,
 				name: sessionData.user.name,
 				email: sessionData.user.email,
-				role: (sessionData.user as any).role || 'user',
+				role,
 				image: sessionData.user.image
 			};
 			event.locals.session = {
